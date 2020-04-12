@@ -13,89 +13,25 @@ local LootMatch = "([^|]+)|cff(%x+)|H([^|]+)|h%[([^%]]+)%]|h|r[^%d]*(%d*)"
 local MouseIsOver = false
 
 -- DB of items to track
-local Tracked = {
-	--[[ HERBS ]]--
-	[765] = true,     -- Silverleaf
-	[785] = true,     -- Mageroyal
-	[2447] = true,    -- Peacebloom
-	[2449] = true,    -- Earthroot
-	[2450] = true,    -- Briarthorn
-	[2452] = true,    -- Swiftthistle
-	[2453] = true,    -- Bruiseweed
-	[3355] = true,    -- Wild Steelbloom
-	[3356] = true,    -- Kingsblood
-	[3357] = true,    -- Liferoot
-	[3358] = true,    -- Khadgar's Whisker
-	[3369] = true,    -- Grave Moss
-	[3818] = true,    -- Fadeleaf
-	[3819] = true,    -- Wintersbite
-	[3820] = true,    -- Stranglekelp
-	[3821] = true,    -- Goldthorn
-	[4625] = true,    -- Firebloom
-	[8831] = true,    -- Purple Lotus
-	[8836] = true,    -- Arthas' Tears
-	[8838] = true,    -- Sungrass
-	[8839] = true,    -- Blindweed
-	[8845] = true,    -- Ghost Mushroom
-	[8846] = true,    -- Gromsblood
-	[13463] = true,   -- Dreamfoil
-	[13464] = true,   -- Golden Sansam
-	[13465] = true,   -- Mountain Silversage
-	[13466] = true,   -- Plaguebloom
-	[13467] = true,   -- Icecap
-	[13468] = true,   -- Black Lotus
+local TrackedItemTypes = {
+	[7] = { -- LE_ITEM_CLASS_TRADEGOODS
+		[5] = true, -- Cloth
+		[6] = true, -- Leather
+		[7] = true, -- Metal & Stone
+		[8] = true, -- Cooking
+		[9] = true, -- Herb
+		--[12] = true, -- Enchanting
+	},
 	
-	--[[ ORE ]]--
-	[2770] = true,    -- Copper Ore
-	[2771] = true,    -- Tin Ore
-	[2775] = true,    -- Silver Ore
-	[2772] = true,    -- Iron Ore
-	[2776] = true,    -- Gold Ore
-	[3858] = true,    -- Mithril Ore
-	[7911] = true,    -- Truesilver Ore
-	[10620] = true,   -- Thorium Ore
+	[15] = { -- LE_ITEM_CLASS_MISCELLANEOUS
+		[2] = true, -- Companion Pets
+		[3] = true, -- Holiday
+		[5] = true, -- Mount
+	},
+}
+
+local TrackedItems = {
 	
-	--[[ SKINS ]]--
-	[2934] = true,    -- Ruined Leather Scraps
-	[2318] = true,    -- Light Leather
-	[783] = true,     -- Light Hide
-	[2319] = true,    -- Medium Leather
-	[4232] = true,    -- Medium Hide
-	[20649] = true,   -- Heavy Leather
-	[4304] = true,    -- Thick Leather
-	[8170] = true,    -- Rugged Leather
-	[8171] = true,    -- Rugged Hide
-	
-	--[[ FISH ]]--
-	[6291] = true,    -- Raw Brilliant Smallfish
-	[6303] = true,    -- Raw Slitherskin Mackerel
-	[6289] = true,    -- Raw Longjaw Mud Snapper
-	[6317] = true,    -- Raw Loch Frenzy
-	[6358] = true,    -- Oily Blackmouth
-	[6361] = true,    -- Raw Rainbow Fin Albacore
-	[21071] = true,   -- Raw Sagefish
-	[6308] = true,    -- Raw Bristle Whisker Catfish
-	[6359] = true,    -- Firefin Snapper
-	[6362] = true,    -- Raw Rockscale Cod
-	[4603] = true,    -- Raw Spotted Yellowtail
-	[13422] = true,   -- Stonescale Eel
-	[13754] = true,   -- Raw Glossy Mightfish
-	[13756] = true,   -- Raw Summer Bass
-	[13757] = true,   -- Lightning Eel
-	[13758] = true,   -- Raw Redgill
-	[13759] = true,   -- Raw Nightfin Snapper
-	[13760] = true,   -- Raw Sunscale Salmon
-	[13889] = true,   -- Raw Whitescale Salmon
-	[6522] = true,    -- Deviate Fish
-	[20916] = true,   -- Mithril Headed Trout
-	
-	--[[ CLOTH ]]--
-	[2589] = true,     -- Linen Cloth
-	[2592] = true,     -- Wool Cloth
-	[4306] = true,     -- Silk Cloth
-	[4338] = true,     -- Mageweave Cloth
-	[14047] = true,    -- Runecloth
-	[14256] = true,    -- Felcloth
 }
 
 -- Keep track of what we've gathered, how many nodes, and what quantity.
@@ -293,10 +229,10 @@ local Update = function(self, event, msg)
 	
 	ID = tonumber(ID)
 	Quantity = tonumber(Quantity) or 1
-	local SubType = select(7, GetItemInfo(ID))
+	local Type, SubType, _, _, _, _, ClassID, SubClassID = select(6, GetItemInfo(ID))
 	
 	-- Check that we want to track the type of item
-	if (not Tracked[ID]) then
+	if not (TrackedItemTypes[ClassID] and TrackedItemTypes[ClassID][SubClassID]) or not TrackedItems[ID] then
 		return
 	end
 	
