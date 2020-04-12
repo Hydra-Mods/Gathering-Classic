@@ -12,7 +12,6 @@ local LootMessage = (LOOT_ITEM_SELF:gsub("%%.*", ""))
 local LootMatch = "([^|]+)|cff(%x+)|H([^|]+)|h%[([^%]]+)%]|h|r[^%d]*(%d*)"
 local MouseIsOver = false
 
--- DB of items to track
 local TrackedItemTypes = {
 	[7] = { -- LE_ITEM_CLASS_TRADEGOODS
 		[5] = true, -- Cloth
@@ -28,10 +27,6 @@ local TrackedItemTypes = {
 		[3] = true, -- Holiday
 		[5] = true, -- Mount
 	},
-}
-
-local TrackedItems = {
-	
 }
 
 -- Keep track of what we've gathered, how many nodes, and what quantity.
@@ -232,7 +227,7 @@ local Update = function(self, event, msg)
 	local Type, SubType, _, _, _, _, ClassID, SubClassID = select(6, GetItemInfo(ID))
 	
 	-- Check that we want to track the type of item
-	if not (TrackedItemTypes[ClassID] and TrackedItemTypes[ClassID][SubClassID]) or not TrackedItems[ID] then
+	if (TrackedItemTypes[ClassID] and not TrackedItemTypes[ClassID][SubClassID]) then
 		return
 	end
 	
