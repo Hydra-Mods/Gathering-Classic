@@ -14,7 +14,7 @@ local MouseIsOver = false
 
 -- DB of items to track
 local Tracked = {
-	--[[ HERBS ]]--
+	-- Herbs
 	[765] = true,     -- Silverleaf
 	[785] = true,     -- Mageroyal
 	[2447] = true,    -- Peacebloom
@@ -45,7 +45,7 @@ local Tracked = {
 	[13467] = true,   -- Icecap
 	[13468] = true,   -- Black Lotus
 	
-	--[[ ORE ]]--
+	-- Ore
 	[2770] = true,    -- Copper Ore
 	[2771] = true,    -- Tin Ore
 	[2775] = true,    -- Silver Ore
@@ -55,7 +55,7 @@ local Tracked = {
 	[7911] = true,    -- Truesilver Ore
 	[10620] = true,   -- Thorium Ore
 	
-	--[[ SKINS ]]--
+	-- Skins
 	[2934] = true,    -- Ruined Leather Scraps
 	[2318] = true,    -- Light Leather
 	[783] = true,     -- Light Hide
@@ -66,7 +66,7 @@ local Tracked = {
 	[8170] = true,    -- Rugged Leather
 	[8171] = true,    -- Rugged Hide
 	
-	--[[ FISH ]]--
+	-- Fish
 	[6291] = true,    -- Raw Brilliant Smallfish
 	[6303] = true,    -- Raw Slitherskin Mackerel
 	[6289] = true,    -- Raw Longjaw Mud Snapper
@@ -89,13 +89,16 @@ local Tracked = {
 	[6522] = true,    -- Deviate Fish
 	[20916] = true,   -- Mithril Headed Trout
 	
-	--[[ CLOTH ]]--
+	-- Cloth
 	[2589] = true,     -- Linen Cloth
 	[2592] = true,     -- Wool Cloth
 	[4306] = true,     -- Silk Cloth
 	[4338] = true,     -- Mageweave Cloth
 	[14047] = true,    -- Runecloth
 	[14256] = true,    -- Felcloth
+	
+	-- Noblegarden
+	[45072] = true, -- Brightly Colored Egg
 }
 
 
