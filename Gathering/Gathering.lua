@@ -68,6 +68,7 @@ local Tracked = {
 	
 	-- Fish
 	[6291] = true,    -- Raw Brilliant Smallfish
+	[6299] = true,    -- Sickly Looking Fish
 	[6303] = true,    -- Raw Slitherskin Mackerel
 	[6289] = true,    -- Raw Longjaw Mud Snapper
 	[6317] = true,    -- Raw Loch Frenzy
@@ -91,7 +92,7 @@ local Tracked = {
 	[13889] = true,   -- Raw Whitescale Salmon
 	[13893] = true,   -- Large Raw Mightfish
 	[6522] = true,    -- Deviate Fish
-	[20916] = true,   -- Mithril Headed Trout
+	[8365] = true,    -- Raw Mithril Head Trout
 	
 	-- Cloth
 	[2589] = true,     -- Linen Cloth
