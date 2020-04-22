@@ -39,6 +39,7 @@ local Tracked = {
 	[8845] = true,    -- Ghost Mushroom
 	[8846] = true,    -- Gromsblood
 	[13463] = true,   -- Dreamfoil
+	[13466] = true,   -- Sorrowmoss
 	[13464] = true,   -- Golden Sansam
 	[13465] = true,   -- Mountain Silversage
 	[13466] = true,   -- Plaguebloom
