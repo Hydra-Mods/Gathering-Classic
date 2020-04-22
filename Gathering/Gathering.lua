@@ -17,6 +17,7 @@ local Tracked = {
 	-- Herbs
 	[765] = true,     -- Silverleaf
 	[785] = true,     -- Mageroyal
+	[2044] = true,    -- Dragon's Teeth
 	[2447] = true,    -- Peacebloom
 	[2449] = true,    -- Earthroot
 	[2450] = true,    -- Briarthorn
