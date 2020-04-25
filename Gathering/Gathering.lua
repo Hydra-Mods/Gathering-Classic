@@ -105,6 +105,27 @@ local Tracked = {
 	[14047] = true,    -- Runecloth
 	[14256] = true,    -- Felcloth
 	
+	-- Enchanting
+	[10938] = true,    -- Lesser Magic Essence
+	[10939] = true,    -- Greater Magic Essence
+	[10940] = true,    -- Strange Dust
+	[10998] = true,    -- Lesser Astral Essence
+	[11082] = true,    -- Greater Astral Essence
+	[11083] = true,    -- Soul Dust
+	[11134] = true,    -- Lesser Mystic Essence
+	[11135] = true,    -- Greater Mystic Essence
+	[11137] = true,    -- Vision Dust
+	[11174] = true,    -- Lesser Nether Essence
+	[11175] = true,    -- Greater Nether Essence
+	[11176] = true,    -- Dream Dust
+	[11177] = true,    -- Small Radiant Shard
+	[11178] = true,    -- Large Radiant Shard
+	[14343] = true,    -- Small Brilliant Shard
+	[14344] = true,    -- Large Brilliant Shard
+	[16202] = true,    -- Lesser Eternal Essence
+	[16203] = true,    -- Greater Eternal Essence
+	[16204] = true,    -- Illusion Dust
+	
 	-- Noblegarden
 	[45072] = true, -- Brightly Colored Egg
 }
