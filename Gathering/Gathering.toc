@@ -1,6 +1,6 @@
 ## Interface: 11304
 ## Author: Hydra
-## Version: 1.10
+## Version: 1.11
 ## Title: Gathering
 ## Notes: Track gathered items.
 
