@@ -68,6 +68,7 @@ local Tracked = {
 	[4304] = true,    -- Thick Leather
 	[8170] = true,    -- Rugged Leather
 	[8171] = true,    -- Rugged Hide
+	[15417] = true,   -- Devilsaur Leather
 	
 	-- Fish
 	[6291] = true,    -- Raw Brilliant Smallfish
@@ -128,6 +129,12 @@ local Tracked = {
 	
 	-- Noblegarden
 	[45072] = true, -- Brightly Colored Egg
+	
+	-- Other
+	[12811] = true, -- Righteous Orb
+	[12803] = true, -- Living Essence
+	[7078] = true,  -- Essence of Fire
+	[12938] = true, -- Blood of Heroes
 }
 
 
