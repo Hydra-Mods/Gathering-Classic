@@ -135,6 +135,8 @@ local Tracked = {
 	[12811] = true, -- Righteous Orb
 	[12803] = true, -- Living Essence
 	[7078] = true,  -- Essence of Fire
+	[7080] = true,  -- Essence of Water
+	[7082] = true,  -- Essence of Air
 	[12938] = true, -- Blood of Heroes
 }
 
