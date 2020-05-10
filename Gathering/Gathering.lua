@@ -57,6 +57,7 @@ local Tracked = {
 	[3858] = true,    -- Mithril Ore
 	[7911] = true,    -- Truesilver Ore
 	[10620] = true,   -- Thorium Ore
+	[12363] = true,   -- Arcane Crystal
 	
 	-- Skins
 	[2934] = true,    -- Ruined Leather Scraps
