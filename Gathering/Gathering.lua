@@ -99,7 +99,7 @@ local Tracked = {
 	[6522] = true,    -- Deviate Fish
 	[8365] = true,    -- Raw Mithril Head Trout
 	
-	-- Meat
+	-- Cooking
 	[769] = true,      -- Chunk of Boar Meat
 	[1015] = true,     -- Lean Wolf Flank
 	[2674] = true,     -- Crawler Meat
