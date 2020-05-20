@@ -150,10 +150,14 @@ local Tracked = {
 	-- Other
 	[12811] = true, -- Righteous Orb
 	[12803] = true, -- Living Essence
+	[7076] = true,  -- Essence of Earth
 	[7078] = true,  -- Essence of Fire
 	[7080] = true,  -- Essence of Water
 	[7082] = true,  -- Essence of Air
 	[12938] = true, -- Blood of Heroes
+	[12820] = true, -- Winterfall Firewater
+	[21377] = true, -- Deadwood Headdress Feather
+	[21383] = true, -- Winterfall Spirit Beads
 }
 
 
