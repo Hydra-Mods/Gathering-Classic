@@ -4,7 +4,6 @@ local pairs = pairs
 local select = select
 local tonumber = tonumber
 local match = string.match
-local strsplit = strsplit
 local GetItemInfo = GetItemInfo
 local RarityColor = ITEM_QUALITY_COLORS
 local LootMessage = (LOOT_ITEM_SELF:gsub("%%.*", ""))
@@ -129,7 +128,7 @@ function Gathering:OnEvent(event, msg)
 	end
 	
 	local PreMessage, _, ItemString, Name, Quantity = match(msg, LootMatch)
-	local LinkType, ID = strsplit(":", ItemString)
+	local LinkType, ID = match(ItemString, "^(%a+):(%d+)")
 	
 	if (PreMessage ~= LootMessage) then
 		return
