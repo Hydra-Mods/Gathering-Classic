@@ -104,15 +104,12 @@ function Gathering:Reset()
 	self:SetScript("OnUpdate", nil)
 	
 	wipe(self.Gathered)
+	wipe(self.SecondsPerItem)
 	
 	self.NumTypes = 0
 	self.TotalGathered = 0
 	self.Seconds = 0
 	self.Elapsed = 0
-	
-	for key in pairs(self.SecondsPerItem) do
-		self.SecondsPerItem[key] = 0
-	end
 	
 	self.Text:SetTextColor(1, 1, 1)
 	self.Text:SetText(date("!%X", self.Seconds))
@@ -203,7 +200,7 @@ function Gathering:OnEnter()
 			end
 			
 			if self.SecondsPerItem[Name] then
-				self.Tooltip:AddDoubleLine(format("%s%s|r:", Hex, Name), format("%s (%s/Hr)", Value, format("%.0f", (((Value / self.SecondsPerItem[Name]) * 60) * 60))), 1, 1, 1, 1, 1, 1)
+				self.Tooltip:AddDoubleLine(format("%s%s|r:", Hex, Name), format("%s (%s/Hr)", Value, format("%.0f", ((Value / self.SecondsPerItem[Name]) * 60 * 60))), 1, 1, 1, 1, 1, 1)
 			else
 				self.Tooltip:AddDoubleLine(format("%s%s|r:", Hex, Name), Value, 1, 1, 1, 1, 1, 1)
 			end
@@ -215,8 +212,8 @@ function Gathering:OnEnter()
 	end
 	
 	self.Tooltip:AddLine(" ")
-	self.Tooltip:AddDoubleLine("Total Gathered:", format("%s", self.TotalGathered))
-	self.Tooltip:AddDoubleLine("Total Average Per Hour:", format("%.0f", (((self.TotalGathered / self.Seconds) * 60) * 60)))
+	self.Tooltip:AddDoubleLine("Total Gathered:", self.TotalGathered)
+	self.Tooltip:AddDoubleLine("Total Average Per Hour:", format("%.0f", ((self.TotalGathered / self.Seconds) * 60 * 60)))
 	self.Tooltip:AddLine(" ")
 	self.Tooltip:AddLine("Left click: Toggle timer")
 	self.Tooltip:AddLine("Right click: Reset data")
