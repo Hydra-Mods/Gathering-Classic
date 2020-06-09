@@ -24,7 +24,7 @@ Gathering:RegisterForDrag("LeftButton")
 Gathering:SetScript("OnDragStart", Gathering.StartMoving)
 Gathering:SetScript("OnDragStop", Gathering.StopMovingOrSizing)
 
--- Tett
+-- Text
 Gathering.Text = Gathering:CreateFontString(nil, "OVERLAY")
 Gathering.Text:SetPoint("CENTER", Gathering, 0, 0)
 Gathering.Text:SetJustifyH("CENTER")
@@ -32,7 +32,7 @@ Gathering.Text:SetFont(Font, 14)
 Gathering.Text:SetText("Gathering")
 
 -- Tooltip
-Gathering.Tooltip = CreateFrame("GameTooltip", "GatheringTooltip", UIParent, "GameTooltipTemplate")
+Gathering.Tooltip = CreateFrame("GameTooltip", "Gathering Tooltip", UIParent, "GameTooltipTemplate")
 
 -- Data
 Gathering.Gathered = {}
