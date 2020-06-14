@@ -297,6 +297,7 @@ Gathering.Tracked = {
 	[7911] = true,    -- Truesilver Ore
 	[10620] = true,   -- Thorium Ore
 	[12363] = true,   -- Arcane Crystal
+	[19774] = true,   -- Souldarite
 	
 	-- Skins
 	[2934] = true,    -- Ruined Leather Scraps
@@ -309,6 +310,7 @@ Gathering.Tracked = {
 	[8170] = true,    -- Rugged Leather
 	[8171] = true,    -- Rugged Hide
 	[15417] = true,   -- Devilsaur Leather
+	[19767] = true,   -- Primal Bat Leather
 	
 	-- Fish
 	[6291] = true,    -- Raw Brilliant Smallfish
