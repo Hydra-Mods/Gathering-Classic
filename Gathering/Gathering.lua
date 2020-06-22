@@ -1,14 +1,212 @@
-local format = format
 local date = date
 local pairs = pairs
 local select = select
+local max = math.max
+local floor = floor
+local format = format
 local tonumber = tonumber
 local match = string.match
 local GetItemInfo = GetItemInfo
-local RarityColor = ITEM_QUALITY_COLORS
-local LootMessage = (LOOT_ITEM_SELF:gsub("%%.*", ""))
+local BreakUpLargeNumbers = BreakUpLargeNumbers
+local ITEM_QUALITY_COLORS = ITEM_QUALITY_COLORS
+local LootMessage = LOOT_ITEM_SELF:gsub("%%.*", "")
 local LootMatch = "([^|]+)|cff(%x+)|H([^|]+)|h%[([^%]]+)%]|h|r[^%d]*(%d*)"
+local Locale = GetLocale()
+local MaxWidgets = 11
+local BlankTexture = "Interface\\AddOns\\Gathering\\vUIBlank.tga"
+local BarTexture = "Interface\\AddOns\\Gathering\\vUI4.tga"
 local Font = "Interface\\Addons\\Gathering\\PTSans.ttf"
+
+local Index = function(self, key)
+	return key
+end
+
+local L = setmetatable({}, {__index = Index})
+
+if (Locale == "deDE") then -- German
+	L["Total Gathered:"] = "Total Gathered:"
+	L["Total Average Per Hour:"] = "Total Average Per Hour:"
+	L["Total Value:"] = "Total Value:"
+	L["Left click: Toggle timer"] = "Left click: Toggle timer"
+	L["Right click: Reset data"] = "Right click: Reset data"
+	L["Hr"] = "Hr"
+	
+	L["Ore"] = "Ore"
+	L["Herbs"] = "Herbs"
+	L["Leather"] = "Leather"
+	L["Fish"] = "Fish"
+	L["Meat"] = "Meat"
+	L["Cloth"] = "Cloth"
+	L["Enchanting"] = "Enchanting"
+	L["Reagents"] = "Reagents"
+	L["Ignore Bind on Pickup"] = "Ignore Bind on Pickup"
+elseif (Locale == "esES") then -- Spanish (Spain)
+	L["Total Gathered:"] = "Total Gathered:"
+	L["Total Average Per Hour:"] = "Total Average Per Hour:"
+	L["Total Value:"] = "Total Value:"
+	L["Left click: Toggle timer"] = "Left click: Toggle timer"
+	L["Right click: Reset data"] = "Right click: Reset data"
+	L["Hr"] = "Hr"
+	
+	L["Ore"] = "Ore"
+	L["Herbs"] = "Herbs"
+	L["Leather"] = "Leather"
+	L["Fish"] = "Fish"
+	L["Meat"] = "Meat"
+	L["Cloth"] = "Cloth"
+	L["Enchanting"] = "Enchanting"
+	L["Reagents"] = "Reagents"
+	L["Ignore Bind on Pickup"] = "Ignore Bind on Pickup"
+elseif (Locale == "esMX") then -- Spanish (Mexico)
+	L["Total Gathered:"] = "Total Gathered:"
+	L["Total Average Per Hour:"] = "Total Average Per Hour:"
+	L["Total Value:"] = "Total Value:"
+	L["Left click: Toggle timer"] = "Left click: Toggle timer"
+	L["Right click: Reset data"] = "Right click: Reset data"
+	L["Hr"] = "Hr"
+	
+	L["Ore"] = "Ore"
+	L["Herbs"] = "Herbs"
+	L["Leather"] = "Leather"
+	L["Fish"] = "Fish"
+	L["Meat"] = "Meat"
+	L["Cloth"] = "Cloth"
+	L["Enchanting"] = "Enchanting"
+	L["Reagents"] = "Reagents"
+	L["Ignore Bind on Pickup"] = "Ignore Bind on Pickup"
+elseif (Locale == "frFR") then -- French
+	L["Total Gathered:"] = "Total Gathered:"
+	L["Total Average Per Hour:"] = "Total Average Per Hour:"
+	L["Total Value:"] = "Total Value:"
+	L["Left click: Toggle timer"] = "Left click: Toggle timer"
+	L["Right click: Reset data"] = "Right click: Reset data"
+	L["Hr"] = "Hr"
+	
+	L["Ore"] = "Ore"
+	L["Herbs"] = "Herbs"
+	L["Leather"] = "Leather"
+	L["Fish"] = "Fish"
+	L["Meat"] = "Meat"
+	L["Cloth"] = "Cloth"
+	L["Enchanting"] = "Enchanting"
+	L["Reagents"] = "Reagents"
+	L["Ignore Bind on Pickup"] = "Ignore Bind on Pickup"
+elseif (Locale == "itIT") then -- Italian
+	L["Total Gathered:"] = "Total Gathered:"
+	L["Total Average Per Hour:"] = "Total Average Per Hour:"
+	L["Total Value:"] = "Total Value:"
+	L["Left click: Toggle timer"] = "Left click: Toggle timer"
+	L["Right click: Reset data"] = "Right click: Reset data"
+	L["Hr"] = "Hr"
+	
+	L["Ore"] = "Ore"
+	L["Herbs"] = "Herbs"
+	L["Leather"] = "Leather"
+	L["Fish"] = "Fish"
+	L["Meat"] = "Meat"
+	L["Cloth"] = "Cloth"
+	L["Enchanting"] = "Enchanting"
+	L["Reagents"] = "Reagents"
+	L["Ignore Bind on Pickup"] = "Ignore Bind on Pickup"
+elseif (Locale == "koKR") then -- Korean
+	L["Total Gathered:"] = "Total Gathered:"
+	L["Total Average Per Hour:"] = "Total Average Per Hour:"
+	L["Total Value:"] = "Total Value:"
+	L["Left click: Toggle timer"] = "Left click: Toggle timer"
+	L["Right click: Reset data"] = "Right click: Reset data"
+	L["Hr"] = "Hr"
+	
+	L["Ore"] = "Ore"
+	L["Herbs"] = "Herbs"
+	L["Leather"] = "Leather"
+	L["Fish"] = "Fish"
+	L["Meat"] = "Meat"
+	L["Cloth"] = "Cloth"
+	L["Enchanting"] = "Enchanting"
+	L["Reagents"] = "Reagents"
+	L["Ignore Bind on Pickup"] = "Ignore Bind on Pickup"
+	
+	Font = "Fonts\\2002b.ttf"
+elseif (Locale == "ptBR") then -- Portuguese (Brazil)
+	L["Total Gathered:"] = "Total Gathered:"
+	L["Total Average Per Hour:"] = "Total Average Per Hour:"
+	L["Total Value:"] = "Total Value:"
+	L["Left click: Toggle timer"] = "Left click: Toggle timer"
+	L["Right click: Reset data"] = "Right click: Reset data"
+	L["Hr"] = "Hr"
+	
+	L["Ore"] = "Ore"
+	L["Herbs"] = "Herbs"
+	L["Leather"] = "Leather"
+	L["Fish"] = "Fish"
+	L["Meat"] = "Meat"
+	L["Cloth"] = "Cloth"
+	L["Enchanting"] = "Enchanting"
+	L["Reagents"] = "Reagents"
+	L["Ignore Bind on Pickup"] = "Ignore Bind on Pickup"
+elseif (Locale == "ruRU") then -- Russian
+	L["Total Gathered:"] = "Total Gathered:"
+	L["Total Average Per Hour:"] = "Total Average Per Hour:"
+	L["Total Value:"] = "Total Value:"
+	L["Left click: Toggle timer"] = "Left click: Toggle timer"
+	L["Right click: Reset data"] = "Right click: Reset data"
+	L["Hr"] = "Hr"
+	
+	L["Ore"] = "Ore"
+	L["Herbs"] = "Herbs"
+	L["Leather"] = "Leather"
+	L["Fish"] = "Fish"
+	L["Meat"] = "Meat"
+	L["Cloth"] = "Cloth"
+	L["Enchanting"] = "Enchanting"
+	L["Reagents"] = "Reagents"
+	L["Ignore Bind on Pickup"] = "Ignore Bind on Pickup"
+elseif (Locale == "zhCN") then -- Chinese (Simplified)
+	L["Total Gathered:"] = "Total Gathered:"
+	L["Total Average Per Hour:"] = "Total Average Per Hour:"
+	L["Total Value:"] = "Total Value:"
+	L["Left click: Toggle timer"] = "Left click: Toggle timer"
+	L["Right click: Reset data"] = "Right click: Reset data"
+	L["Hr"] = "Hr"
+	
+	L["Ore"] = "Ore"
+	L["Herbs"] = "Herbs"
+	L["Leather"] = "Leather"
+	L["Fish"] = "Fish"
+	L["Meat"] = "Meat"
+	L["Cloth"] = "Cloth"
+	L["Enchanting"] = "Enchanting"
+	L["Reagents"] = "Reagents"
+	L["Ignore Bind on Pickup"] = "Ignore Bind on Pickup"
+	
+	Font = "Fonts\\ARHei.ttf"
+elseif (Locale == "zhTW") then -- Chinese (Traditional/Taiwan)
+	L["Total Gathered:"] = "Total Gathered:"
+	L["Total Average Per Hour:"] = "Total Average Per Hour:"
+	L["Total Value:"] = "Total Value:"
+	L["Left click: Toggle timer"] = "Left click: Toggle timer"
+	L["Right click: Reset data"] = "Right click: Reset data"
+	L["Hr"] = "Hr"
+	
+	L["Ore"] = "Ore"
+	L["Herbs"] = "Herbs"
+	L["Leather"] = "Leather"
+	L["Fish"] = "Fish"
+	L["Meat"] = "Meat"
+	L["Cloth"] = "Cloth"
+	L["Enchanting"] = "Enchanting"
+	L["Reagents"] = "Reagents"
+	L["Ignore Bind on Pickup"] = "Ignore Bind on Pickup"
+	
+	Font = "Fonts\\bLEI00D.ttf"
+end
+
+local Outline = {
+	bgFile = BlankTexture,
+	edgeFile = BlankTexture,
+	edgeSize = 1,
+	insets = {top = 0, left = 0, bottom = 0, right = 0},
+}
 
 -- Header
 local Gathering = CreateFrame("Frame", "Gathering Header", UIParent)
@@ -42,7 +240,210 @@ Gathering.Elapsed = 0
 Gathering.Seconds = 0
 Gathering.SecondsPerItem = {}
 
--- Tools
+Gathering.DefaultSettings = {
+	-- Tracking
+	["track-ore"] = true,
+	["track-herbs"] = true,
+	["track-leather"] = true,
+	["track-fish"] = true,
+	["track-meat"] = true,
+	["track-cloth"] = true,
+	["track-enchanting"] = true,
+	["track-reagents"] = true,
+	
+	-- Functionality
+	["ignore-bop"] = false, -- Ignore bind on pickup gear. IE: ignore BoP loot on a raid run, but show BoE's for the auction house
+}
+
+Gathering.Tracked = {}
+
+function Gathering:UpdateHerbTracking(value)
+	Gathering.Tracked[765] = value     -- Silverleaf
+	Gathering.Tracked[785] = value     -- Mageroyal
+	Gathering.Tracked[2044] = value    -- Dragon's Teeth
+	Gathering.Tracked[2447] = value    -- Peacebloom
+	Gathering.Tracked[2449] = value    -- Earthroot
+	Gathering.Tracked[2450] = value    -- Briarthorn
+	Gathering.Tracked[2452] = value    -- Swiftthistle
+	Gathering.Tracked[2453] = value    -- Bruiseweed
+	Gathering.Tracked[3355] = value    -- Wild Steelbloom
+	Gathering.Tracked[3356] = value    -- Kingsblood
+	Gathering.Tracked[3357] = value    -- Liferoot
+	Gathering.Tracked[3358] = value    -- Khadgar's Whisker
+	Gathering.Tracked[3369] = value    -- Grave Moss
+	Gathering.Tracked[3818] = value    -- Fadeleaf
+	Gathering.Tracked[3819] = value    -- Wintersbite
+	Gathering.Tracked[3820] = value    -- Stranglekelp
+	Gathering.Tracked[3821] = value    -- Goldthorn
+	Gathering.Tracked[4625] = value    -- Firebloom
+	Gathering.Tracked[8831] = value    -- Purple Lotus
+	Gathering.Tracked[8836] = value    -- Arthas' Tears
+	Gathering.Tracked[8838] = value    -- Sungrass
+	Gathering.Tracked[8839] = value    -- Blindweed
+	Gathering.Tracked[8845] = value    -- Ghost Mushroom
+	Gathering.Tracked[8846] = value    -- Gromsblood
+	Gathering.Tracked[13463] = value   -- Dreamfoil
+	Gathering.Tracked[13466] = value   -- Sorrowmoss
+	Gathering.Tracked[13464] = value   -- Golden Sansam
+	Gathering.Tracked[13465] = value   -- Mountain Silversage
+	Gathering.Tracked[13466] = value   -- Plaguebloom
+	Gathering.Tracked[13467] = value   -- Icecap
+	Gathering.Tracked[13468] = value   -- Black Lotus
+	Gathering.Tracked[19726] = value   -- Bloodvine
+end
+
+function Gathering:UpdateHerbTracking(value)
+	Gathering.Tracked[765] = value     -- Silverleaf
+	Gathering.Tracked[785] = value     -- Mageroyal
+	Gathering.Tracked[2044] = value    -- Dragon's Teeth
+	Gathering.Tracked[2447] = value    -- Peacebloom
+	Gathering.Tracked[2449] = value    -- Earthroot
+	Gathering.Tracked[2450] = value    -- Briarthorn
+	Gathering.Tracked[2452] = value    -- Swiftthistle
+	Gathering.Tracked[2453] = value    -- Bruiseweed
+	Gathering.Tracked[3355] = value    -- Wild Steelbloom
+	Gathering.Tracked[3356] = value    -- Kingsblood
+	Gathering.Tracked[3357] = value    -- Liferoot
+	Gathering.Tracked[3358] = value    -- Khadgar's Whisker
+	Gathering.Tracked[3369] = value    -- Grave Moss
+	Gathering.Tracked[3818] = value    -- Fadeleaf
+	Gathering.Tracked[3819] = value    -- Wintersbite
+	Gathering.Tracked[3820] = value    -- Stranglekelp
+	Gathering.Tracked[3821] = value    -- Goldthorn
+	Gathering.Tracked[4625] = value    -- Firebloom
+	Gathering.Tracked[8831] = value    -- Purple Lotus
+	Gathering.Tracked[8836] = value    -- Arthas' Tears
+	Gathering.Tracked[8838] = value    -- Sungrass
+	Gathering.Tracked[8839] = value    -- Blindweed
+	Gathering.Tracked[8845] = value    -- Ghost Mushroom
+	Gathering.Tracked[8846] = value    -- Gromsblood
+	Gathering.Tracked[13463] = value   -- Dreamfoil
+	Gathering.Tracked[13466] = value   -- Sorrowmoss
+	Gathering.Tracked[13464] = value   -- Golden Sansam
+	Gathering.Tracked[13465] = value   -- Mountain Silversage
+	Gathering.Tracked[13466] = value   -- Plaguebloom
+	Gathering.Tracked[13467] = value   -- Icecap
+	Gathering.Tracked[13468] = value   -- Black Lotus
+	Gathering.Tracked[19726] = value   -- Bloodvine
+end
+
+function Gathering:UpdateOreTracking(value)
+	Gathering.Tracked[2770] = value    -- Copper Ore
+	Gathering.Tracked[2771] = value    -- Tin Ore
+	Gathering.Tracked[2775] = value    -- Silver Ore
+	Gathering.Tracked[2772] = value    -- Iron Ore
+	Gathering.Tracked[2776] = value    -- Gold Ore
+	Gathering.Tracked[3858] = value    -- Mithril Ore
+	Gathering.Tracked[7911] = value    -- Truesilver Ore
+	Gathering.Tracked[10620] = value   -- Thorium Ore
+	Gathering.Tracked[12363] = value   -- Arcane Crystal
+	Gathering.Tracked[19774] = value   -- Souldarite
+end
+
+function Gathering:UpdateLeatherTracking(value)
+	Gathering.Tracked[2934] = value    -- Ruined Leather Scraps
+	Gathering.Tracked[2318] = value    -- Light Leather
+	Gathering.Tracked[783] = value     -- Light Hide
+	Gathering.Tracked[2319] = value    -- Medium Leather
+	Gathering.Tracked[4232] = value    -- Medium Hide
+	Gathering.Tracked[20649] = value   -- Heavy Leather
+	Gathering.Tracked[4304] = value    -- Thick Leather
+	Gathering.Tracked[8170] = value    -- Rugged Leather
+	Gathering.Tracked[8171] = value    -- Rugged Hide
+	Gathering.Tracked[15417] = value   -- Devilsaur Leather
+	Gathering.Tracked[19767] = value   -- Primal Bat Leather
+end
+
+function Gathering:UpdateFishTracking(value)
+	Gathering.Tracked[6291] = value    -- Raw Brilliant Smallfish
+	Gathering.Tracked[6299] = value    -- Sickly Looking Fish
+	Gathering.Tracked[6303] = value    -- Raw Slitherskin Mackerel
+	Gathering.Tracked[6289] = value    -- Raw Longjaw Mud Snapper
+	Gathering.Tracked[6317] = value    -- Raw Loch Frenzy
+	Gathering.Tracked[6358] = value    -- Oily Blackmouth
+	Gathering.Tracked[6361] = value    -- Raw Rainbow Fin Albacore
+	Gathering.Tracked[21071] = value   -- Raw Sagefish
+	Gathering.Tracked[6308] = value    -- Raw Bristle Whisker Catfish
+	Gathering.Tracked[6359] = value    -- Firefin Snapper
+	Gathering.Tracked[6362] = value    -- Raw Rockscale Cod
+	Gathering.Tracked[4603] = value    -- Raw Spotted Yellowtail
+	Gathering.Tracked[12238] = value   -- Darkshore Grouper
+	Gathering.Tracked[13422] = value   -- Stonescale Eel
+	Gathering.Tracked[13754] = value   -- Raw Glossy Mightfish
+	Gathering.Tracked[13755] = value   -- Winter Squid
+	Gathering.Tracked[13756] = value   -- Raw Summer Bass
+	Gathering.Tracked[13757] = value   -- Lightning Eel
+	Gathering.Tracked[13758] = value   -- Raw Redgill
+	Gathering.Tracked[13759] = value   -- Raw Nightfin Snapper
+	Gathering.Tracked[13760] = value   -- Raw Sunscale Salmon
+	Gathering.Tracked[13888] = value   -- Darkclaw Lobster
+	Gathering.Tracked[13889] = value   -- Raw Whitescale Salmon
+	Gathering.Tracked[13893] = value   -- Large Raw Mightfish
+	Gathering.Tracked[6522] = value    -- Deviate Fish
+	Gathering.Tracked[8365] = value    -- Raw Mithril Head Trout
+end
+
+function Gathering:UpdateMeatTracking(value)
+	Gathering.Tracked[769] = value      -- Chunk of Boar Meat
+	Gathering.Tracked[1015] = value     -- Lean Wolf Flank
+	Gathering.Tracked[2674] = value     -- Crawler Meat
+	Gathering.Tracked[2675] = value     -- Crawler Claw
+	Gathering.Tracked[3173] = value     -- Bear Meat
+	Gathering.Tracked[3685] = value     -- Raptor Egg
+	Gathering.Tracked[3712] = value     -- Turtle Meat
+	Gathering.Tracked[3731] = value     -- Lion Meat
+	Gathering.Tracked[5503] = value     -- Clam Meat
+	Gathering.Tracked[12037] = value    -- Mystery Meat <3
+	Gathering.Tracked[12205] = value    -- White Spider Meat
+	Gathering.Tracked[12207] = value    -- Giant Egg
+	Gathering.Tracked[12184] = value    -- Raptor Flesh
+	Gathering.Tracked[20424] = value    -- Sandworm Meat
+end
+
+function Gathering:UpdateClothTracking(value)
+	Gathering.Tracked[2589] = value     -- Linen Cloth
+	Gathering.Tracked[2592] = value     -- Wool Cloth
+	Gathering.Tracked[4306] = value     -- Silk Cloth
+	Gathering.Tracked[4338] = value     -- Mageweave Cloth
+	Gathering.Tracked[14047] = value    -- Runecloth
+	Gathering.Tracked[14256] = value    -- Felcloth
+end
+
+function Gathering:UpdateEnchantingTracking(value)
+	Gathering.Tracked[10938] = value    -- Lesser Magic Essence
+	Gathering.Tracked[10939] = value    -- Greater Magic Essence
+	Gathering.Tracked[10940] = value    -- Strange Dust
+	Gathering.Tracked[10998] = value    -- Lesser Astral Essence
+	Gathering.Tracked[11082] = value    -- Greater Astral Essence
+	Gathering.Tracked[11083] = value    -- Soul Dust
+	Gathering.Tracked[11134] = value    -- Lesser Mystic Essence
+	Gathering.Tracked[11135] = value    -- Greater Mystic Essence
+	Gathering.Tracked[11137] = value    -- Vision Dust
+	Gathering.Tracked[11174] = value    -- Lesser Nether Essence
+	Gathering.Tracked[11175] = value    -- Greater Nether Essence
+	Gathering.Tracked[11176] = value    -- Dream Dust
+	Gathering.Tracked[11177] = value    -- Small Radiant Shard
+	Gathering.Tracked[11178] = value    -- Large Radiant Shard
+	Gathering.Tracked[14343] = value    -- Small Brilliant Shard
+	Gathering.Tracked[14344] = value    -- Large Brilliant Shard
+	Gathering.Tracked[16202] = value    -- Lesser Eternal Essence
+	Gathering.Tracked[16203] = value    -- Greater Eternal Essence
+	Gathering.Tracked[16204] = value    -- Illusion Dust
+end
+
+function Gathering:UpdateReagentTracking(value)
+	Gathering.Tracked[12811] = value -- Righteous Orb
+	Gathering.Tracked[12803] = value -- Living Essence
+	Gathering.Tracked[7076] = value  -- Essence of Earth
+	Gathering.Tracked[7078] = value  -- Essence of Fire
+	Gathering.Tracked[7080] = value  -- Essence of Water
+	Gathering.Tracked[7082] = value  -- Essence of Air
+	Gathering.Tracked[12938] = value -- Blood of Heroes
+	Gathering.Tracked[12820] = value -- Winterfall Firewater
+	Gathering.Tracked[21377] = value -- Deadwood Headdress Feather
+	Gathering.Tracked[21383] = value -- Winterfall Spirit Beads
+end
+
 function Gathering:UpdateFont()
 	for i = 1, self.Tooltip:GetNumRegions() do
 		local Region = select(i, self.Tooltip:GetRegions())
@@ -54,6 +455,10 @@ function Gathering:UpdateFont()
 			Region.Handled = true
 		end
 	end
+end
+
+function Gathering:CopperToGold(copper)
+	return format("%s|cfff4d03fg|r", BreakUpLargeNumbers(floor((copper / 100) / 100 + 0.5)))
 end
 
 function Gathering:OnUpdate(ela)
@@ -118,7 +523,313 @@ function Gathering:Reset()
 	end
 end
 
-function Gathering:OnEvent(event, msg)
+function Gathering:FormatTime(seconds)
+	if (seconds > 59) then
+		return format("%dm", ceil(seconds / 60))
+	else
+		return format("%0.1fs", seconds)
+	end
+end
+
+function Gathering:CreateHeader(text) -- GENERAL
+	-- Main header
+	local Header = CreateFrame("Frame", nil, self.GUI.ButtonParent)
+	Header:SetSize(190, 20)
+	
+	Header.BG = Header:CreateTexture(nil, "BORDER")
+	Header.BG:SetTexture(BlankTexture)
+	Header.BG:SetVertexColor(0, 0, 0)
+	Header.BG:SetPoint("TOPLEFT", Header, 0, 0)
+	Header.BG:SetPoint("BOTTOMRIGHT", Header, 0, 0)
+	
+	Header.Tex = Header:CreateTexture(nil, "OVERLAY")
+	Header.Tex:SetTexture(BarTexture)
+	Header.Tex:SetPoint("TOPLEFT", Header, 1, -1)
+	Header.Tex:SetPoint("BOTTOMRIGHT", Header, -1, 1)
+	Header.Tex:SetVertexColor(0.25, 0.25, 0.25)
+	
+	Header.Text = Header:CreateFontString(nil, "OVERLAY")
+	Header.Text:SetFont(Font, 12)
+	Header.Text:SetPoint("LEFT", Header, 3, 0)
+	Header.Text:SetJustifyH("LEFT")
+	Header.Text:SetShadowColor(0, 0, 0)
+	Header.Text:SetShadowOffset(1, -1)
+	Header.Text:SetText(text)
+	
+	tinsert(self.GUI.Window.Widgets, Header)
+end
+
+function Gathering:UpdateSettingValue(key, value)
+	if (value == self.DefaultSettings[key]) then
+		GatheringSettings[key] = nil
+	else
+		GatheringSettings[key] = value
+	end
+	
+	self.Settings[key] = value
+end
+
+function Gathering:CheckBoxOnMouseUp()
+	if (Gathering.Settings[self.Setting] == true) then
+		self.Tex:SetVertexColor(0.8, 0, 0)
+		Gathering:UpdateSettingValue(self.Setting, false)
+		
+		if self.Hook then
+			self:Hook(false)
+		end
+	else
+		self.Tex:SetVertexColor(0, 0.8, 0)
+		Gathering:UpdateSettingValue(self.Setting, true)
+		
+		if self.Hook then
+			self:Hook(true)
+		end
+	end
+end
+
+function Gathering:CreateCheckbox(key, text, func)
+	local Checkbox = CreateFrame("Frame", nil, self.GUI.ButtonParent)
+	Checkbox:SetSize(20, 20)
+	Checkbox:SetScript("OnMouseUp", self.CheckBoxOnMouseUp)
+	Checkbox.Setting = key
+	
+	if func then
+		Checkbox.Hook = func
+	end
+	
+	Checkbox.BG = Checkbox:CreateTexture(nil, "BORDER")
+	Checkbox.BG:SetTexture(BlankTexture)
+	Checkbox.BG:SetVertexColor(0, 0, 0)
+	Checkbox.BG:SetPoint("TOPLEFT", Checkbox, 0, 0)
+	Checkbox.BG:SetPoint("BOTTOMRIGHT", Checkbox, 0, 0)
+	
+	Checkbox.Tex = Checkbox:CreateTexture(nil, "OVERLAY")
+	Checkbox.Tex:SetTexture(BarTexture)
+	Checkbox.Tex:SetPoint("TOPLEFT", Checkbox, 1, -1)
+	Checkbox.Tex:SetPoint("BOTTOMRIGHT", Checkbox, -1, 1)
+	
+	Checkbox.Text = Checkbox:CreateFontString(nil, "OVERLAY")
+	Checkbox.Text:SetFont(Font, 12)
+	Checkbox.Text:SetPoint("LEFT", Checkbox, "RIGHT", 3, 0)
+	Checkbox.Text:SetJustifyH("LEFT")
+	Checkbox.Text:SetShadowColor(0, 0, 0)
+	Checkbox.Text:SetShadowOffset(1, -1)
+	Checkbox.Text:SetText(text)
+	
+	if self.Settings[key] then
+		Checkbox.Tex:SetVertexColor(0, 0.8, 0)
+	else
+		Checkbox.Tex:SetVertexColor(0.8, 0, 0)
+	end
+	
+	tinsert(self.GUI.Window.Widgets, Checkbox)
+end
+
+local Scroll = function(self)
+	local First = false
+	
+	for i = 1, #self.Widgets do
+		if (i >= self.Offset) and (i <= self.Offset + MaxWidgets - 1) then
+			if (not First) then
+				self.Widgets[i]:SetPoint("TOPLEFT", Gathering.GUI.ButtonParent, 2, -2)
+				First = true
+			else
+				self.Widgets[i]:SetPoint("TOPLEFT", self.Widgets[i-1], "BOTTOMLEFT", 0, -2)
+			end
+			
+			self.Widgets[i]:Show()
+		else
+			self.Widgets[i]:Hide()
+		end
+	end
+end
+
+local WindowOnMouseWheel = function(self, delta)
+	if (delta == 1) then -- up
+		self.Offset = self.Offset - 1
+		
+		if (self.Offset <= 1) then
+			self.Offset = 1
+		end
+	else -- down
+		self.Offset = self.Offset + 1
+		
+		if (self.Offset > (#self.Widgets - (MaxWidgets - 1))) then
+			self.Offset = self.Offset - 1
+		end
+	end
+	
+	Scroll(self)
+	self.ScrollBar:SetValue(self.Offset)
+end
+
+local ScrollBarOnValueChanged = function(self, value)
+	local Value = floor(value + 0.5)
+	
+	self.Parent.Offset = Value
+	
+	Scroll(self.Parent)
+end
+
+function Gathering:InitiateSettings()
+	self.Settings = {}
+	
+	for Key, Value in pairs(self.DefaultSettings) do -- Add default values
+		self.Settings[Key] = Value
+	end
+	
+	if (not GatheringSettings) then
+		GatheringSettings = {}
+	else
+		for Key, Value in pairs(GatheringSettings) do -- Add stored values
+			self.Settings[Key] = Value
+		end
+	end
+	
+	self:UpdateClothTracking(self.Settings["track-cloth"])
+	self:UpdateLeatherTracking(self.Settings["track-leather"])
+	self:UpdateOreTracking(self.Settings["track-ore"])
+	self:UpdateFishTracking(self.Settings["track-fish"])
+	self:UpdateMeatTracking(self.Settings["track-meat"])
+	self:UpdateHerbTracking(self.Settings["track-herbs"])
+	self:UpdateEnchantingTracking(self.Settings["track-enchanting"])
+	self:UpdateReagentTracking(self.Settings["track-reagents"])
+end
+
+function Gathering:CreateGUI()
+	-- Window
+	self.GUI = CreateFrame("Frame", "Gathering Settings", UIParent)
+	self.GUI:SetSize(210, 18)
+	self.GUI:SetPoint("CENTER", UIParent, 0, 160)
+	self.GUI:SetMovable(true)
+	self.GUI:EnableMouse(true)
+	self.GUI:SetUserPlaced(true)
+	self.GUI:RegisterForDrag("LeftButton")
+	self.GUI:SetScript("OnDragStart", self.GUI.StartMoving)
+	self.GUI:SetScript("OnDragStop", self.GUI.StopMovingOrSizing)
+	
+	self.GUI.BG = self.GUI:CreateTexture(nil, "BORDER")
+	self.GUI.BG:SetPoint("TOPLEFT", self.GUI, -1, 1)
+	self.GUI.BG:SetPoint("BOTTOMRIGHT", self.GUI, 1, -1)
+	self.GUI.BG:SetTexture(BlankTexture)
+	self.GUI.BG:SetVertexColor(0, 0, 0)
+	
+	self.GUI.Texture = self.GUI:CreateTexture(nil, "OVERLAY")
+	self.GUI.Texture:SetPoint("TOPLEFT", self.GUI, 0, 0)
+	self.GUI.Texture:SetPoint("BOTTOMRIGHT", self.GUI, 0, 0)
+	self.GUI.Texture:SetTexture(BarTexture)
+	self.GUI.Texture:SetVertexColor(0.25, 0.25, 0.25)
+	
+	self.GUI.Text = self.GUI:CreateFontString(nil, "OVERLAY")
+	self.GUI.Text:SetPoint("LEFT", self.GUI, 3, -0.5)
+	self.GUI.Text:SetFont(Font, 12)
+	self.GUI.Text:SetJustifyH("LEFT")
+	self.GUI.Text:SetShadowColor(0, 0, 0)
+	self.GUI.Text:SetShadowOffset(1, -1)
+	self.GUI.Text:SetText("|cff00CC6AGathering|r " .. GetAddOnMetadata("Gathering", "Version"))
+	
+	self.GUI.CloseButton = CreateFrame("Frame", nil, self.GUI)
+	self.GUI.CloseButton:SetPoint("TOPRIGHT", self.GUI, 0, 0)
+	self.GUI.CloseButton:SetSize(18, 18)
+	self.GUI.CloseButton:SetScript("OnEnter", function(self) self.Texture:SetVertexColor(1, 0, 0) end)
+	self.GUI.CloseButton:SetScript("OnLeave", function(self) self.Texture:SetVertexColor(1, 1, 1) end)
+	self.GUI.CloseButton:SetScript("OnMouseUp", function() self.GUI:Hide() end)
+	
+	self.GUI.CloseButton.Texture = self.GUI.CloseButton:CreateTexture(nil, "OVERLAY")
+	self.GUI.CloseButton.Texture:SetPoint("CENTER", self.GUI.CloseButton, 0, -0.5)
+	self.GUI.CloseButton.Texture:SetTexture("Interface\\AddOns\\Gathering\\vUIClose.tga")
+	
+	self.GUI.Window = CreateFrame("Frame", nil, self.GUI)
+	self.GUI.Window:SetSize(210, 244)
+	self.GUI.Window:SetPoint("TOPLEFT", self.GUI, "BOTTOMLEFT", 0, -4)
+	self.GUI.Window.Offset = 1
+	self.GUI.Window.Widgets = {}
+	
+	self.GUI.Window:EnableMouseWheel(true)
+	self.GUI.Window:SetScript("OnMouseWheel", WindowOnMouseWheel)
+	
+	self.GUI.Backdrop = self.GUI.Window:CreateTexture(nil, "BORDER")
+	self.GUI.Backdrop:SetPoint("TOPLEFT", self.GUI.Window, -1, 1)
+	self.GUI.Backdrop:SetPoint("BOTTOMRIGHT", self.GUI.Window, 1, -1)
+	self.GUI.Backdrop:SetTexture(BlankTexture)
+	self.GUI.Backdrop:SetVertexColor(0, 0, 0)
+	
+	self.GUI.Inside = self.GUI.Window:CreateTexture(nil, "BORDER")
+	self.GUI.Inside:SetAllPoints()
+	self.GUI.Inside:SetTexture(BlankTexture)
+	self.GUI.Inside:SetVertexColor(0.3, 0.3, 0.3)
+	
+	self.GUI.ButtonParent = CreateFrame("Frame", nil, self.GUI.Window)
+	self.GUI.ButtonParent:SetAllPoints()
+	self.GUI.ButtonParent:SetFrameLevel(self.GUI.Window:GetFrameLevel() + 4)
+	self.GUI.ButtonParent:SetFrameStrata("HIGH")
+	self.GUI.ButtonParent:EnableMouse(true)
+	
+	self.GUI.OuterBackdrop = CreateFrame("Frame", nil, self.GUI.Window)
+	self.GUI.OuterBackdrop:SetPoint("TOPLEFT", self.GUI, -4, 4)
+	self.GUI.OuterBackdrop:SetPoint("BOTTOMRIGHT", self.GUI.Window, 4, -4)
+	self.GUI.OuterBackdrop:SetBackdrop(Outline)
+	self.GUI.OuterBackdrop:SetBackdropColor(0.25, 0.25, 0.25)
+	self.GUI.OuterBackdrop:SetBackdropBorderColor(0, 0, 0)
+	self.GUI.OuterBackdrop:SetFrameStrata("LOW")
+	
+	-- Layout
+	self:CreateHeader(TRACKING) -- GENERAL
+	
+	self:CreateCheckbox("track-ore", L["Ore"], self.UpdateOreTracking)
+	self:CreateCheckbox("track-herbs", L["Herbs"], self.UpdateHerbTracking)
+	self:CreateCheckbox("track-leather", L["Leather"], self.UpdateLeatherTracking)
+	self:CreateCheckbox("track-fish", L["Fish"], self.UpdateFishTracking)
+	self:CreateCheckbox("track-meat", L["Meat"], self.UpdateMeatracking)
+	self:CreateCheckbox("track-cloth", L["Cloth"], self.UpdateClothTracking)
+	self:CreateCheckbox("track-enchanting", L["Enchanting"], self.UpdateEnchantingTracking)
+	self:CreateCheckbox("track-reagents", L["Reagents"], self.UpdateReagentTracking)
+	
+	self:CreateHeader(MISCELLANEOUS)
+	
+	self:CreateCheckbox("ignore-bop", L[L["Ignore Bind on Pickup"]])
+	
+	-- Scroll bar
+	self.GUI.Window.ScrollBar = CreateFrame("Slider", nil, self.GUI.ButtonParent)
+	self.GUI.Window.ScrollBar:SetPoint("TOPRIGHT", self.GUI.Window, -2, -2)
+	self.GUI.Window.ScrollBar:SetPoint("BOTTOMRIGHT", self.GUI.Window, -2, 2)
+	self.GUI.Window.ScrollBar:SetWidth(14)
+	self.GUI.Window.ScrollBar:SetThumbTexture(BlankTexture)
+	self.GUI.Window.ScrollBar:SetOrientation("VERTICAL")
+	self.GUI.Window.ScrollBar:SetValueStep(1)
+	self.GUI.Window.ScrollBar:SetBackdrop(Outline)
+	self.GUI.Window.ScrollBar:SetBackdropColor(0.25, 0.25, 0.25)
+	self.GUI.Window.ScrollBar:SetBackdropBorderColor(0, 0, 0)
+	self.GUI.Window.ScrollBar:SetMinMaxValues(1, (#self.GUI.Window.Widgets - (MaxWidgets - 1)))
+	self.GUI.Window.ScrollBar:SetValue(1)
+	self.GUI.Window.ScrollBar:EnableMouse(true)
+	self.GUI.Window.ScrollBar:SetScript("OnValueChanged", ScrollBarOnValueChanged)
+	self.GUI.Window.ScrollBar.Parent = self.GUI.Window
+	
+	self.GUI.Window.ScrollBar:SetFrameStrata("HIGH")
+	self.GUI.Window.ScrollBar:SetFrameLevel(22)
+	
+	local Thumb = self.GUI.Window.ScrollBar:GetThumbTexture() 
+	Thumb:SetSize(14, 20)
+	Thumb:SetTexture(BarTexture)
+	Thumb:SetVertexColor(0, 0, 0)
+	
+	self.GUI.Window.ScrollBar.NewTexture = self.GUI.Window.ScrollBar:CreateTexture(nil, "BORDER")
+	self.GUI.Window.ScrollBar.NewTexture:SetPoint("TOPLEFT", Thumb, 0, 0)
+	self.GUI.Window.ScrollBar.NewTexture:SetPoint("BOTTOMRIGHT", Thumb, 0, 0)
+	self.GUI.Window.ScrollBar.NewTexture:SetTexture(BlankTexture)
+	self.GUI.Window.ScrollBar.NewTexture:SetVertexColor(0, 0, 0)
+	
+	self.GUI.Window.ScrollBar.NewTexture2 = self.GUI.Window.ScrollBar:CreateTexture(nil, "OVERLAY")
+	self.GUI.Window.ScrollBar.NewTexture2:SetPoint("TOPLEFT", self.GUI.Window.ScrollBar.NewTexture, 1, -1)
+	self.GUI.Window.ScrollBar.NewTexture2:SetPoint("BOTTOMRIGHT", self.GUI.Window.ScrollBar.NewTexture, -1, 1)
+	self.GUI.Window.ScrollBar.NewTexture2:SetTexture(BarTexture)
+	self.GUI.Window.ScrollBar.NewTexture2:SetVertexColor(0.2, 0.2, 0.2)
+	
+	Scroll(self.GUI.Window)
+end
+
+function Gathering:CHAT_MSG_LOOT(msg)
 	if (not msg) then
 		return
 	end
@@ -136,11 +847,14 @@ function Gathering:OnEvent(event, msg)
 	
 	ID = tonumber(ID)
 	Quantity = tonumber(Quantity) or 1
-	local Type, SubType, _, _, _, _, ClassID, SubClassID = select(6, GetItemInfo(ID))
+	local Type, SubType, _, _, _, _, _, _, BindType = select(6, GetItemInfo(ID))
 	
 	-- Check that we want to track the type of item
-	--if (self.TrackedItemTypes[ClassID] and not self.TrackedItemTypes[ClassID][SubClassID]) then
-	if (not self.Tracked[ID]) then
+	if (self.Ignored[ID] or ((not self.Tracked[ID]))) then
+		return
+	end
+	
+	if (BindType and ((BindType ~= 0) and self.Settings["ignore-bop"])) then
 		return
 	end
 	
@@ -170,6 +884,20 @@ function Gathering:OnEvent(event, msg)
 	end
 end
 
+function Gathering:PLAYER_ENTERING_WORLD()
+	self.Ignored = GatheringIgnore or {}
+	
+	self:InitiateSettings()
+	
+	self:UnregisterEvent("PLAYER_ENTERING_WORLD")
+end
+
+function Gathering:OnEvent(event, ...)
+	if self[event] then
+		self[event](self, ...)
+	end
+end
+
 function Gathering:OnEnter()
 	if (self.TotalGathered == 0) then
 		return
@@ -183,7 +911,7 @@ function Gathering:OnEnter()
 	self.Tooltip:SetPoint("TOPLEFT", self, "BOTTOMLEFT")
 	self.Tooltip:ClearLines()
 	
-	self.Tooltip:AddLine("Gathering")
+	self.Tooltip:AddLine(L["Gathering"])
 	self.Tooltip:AddLine(" ")
 	
 	for SubType, Info in pairs(self.Gathered) do
@@ -195,14 +923,10 @@ function Gathering:OnEnter()
 			local Hex = "|cffFFFFFF"
 			
 			if Rarity then
-				Hex = RarityColor[Rarity].hex
+				Hex = ITEM_QUALITY_COLORS[Rarity].hex
 			end
-			
-			if self.SecondsPerItem[Name] then
-				self.Tooltip:AddDoubleLine(format("%s%s|r:", Hex, Name), format("%s (%s/Hr)", Value, format("%.0f", ((Value / self.SecondsPerItem[Name]) * 60 * 60))), 1, 1, 1, 1, 1, 1)
-			else
-				self.Tooltip:AddDoubleLine(format("%s%s|r:", Hex, Name), Value, 1, 1, 1, 1, 1, 1)
-			end
+
+			self.Tooltip:AddDoubleLine(format("%s%s|r:", Hex, Name), format("%s (%s/%s)", Value, floor((Value / max(self.SecondsPerItem[Name], 1)) * 60 * 60), L["Hr"]), 1, 1, 1, 1, 1, 1)
 		end
 		
 		if (Count ~= self.NumTypes) then
@@ -211,11 +935,11 @@ function Gathering:OnEnter()
 	end
 	
 	self.Tooltip:AddLine(" ")
-	self.Tooltip:AddDoubleLine("Total Gathered:", self.TotalGathered)
-	self.Tooltip:AddDoubleLine("Total Average Per Hour:", format("%.0f", ((self.TotalGathered / self.Seconds) * 60 * 60)))
+	self.Tooltip:AddDoubleLine(L["Total Gathered:"], self.TotalGathered, nil, nil, nil, 1, 1, 1)
+	self.Tooltip:AddDoubleLine(L["Total Average Per Hour:"], BreakUpLargeNumbers(floor(((self.TotalGathered / max(self.Seconds, 1)) * 60 * 60))), nil, nil, nil, 1, 1, 1)
 	self.Tooltip:AddLine(" ")
-	self.Tooltip:AddLine("Left click: Toggle timer")
-	self.Tooltip:AddLine("Right click: Reset data")
+	self.Tooltip:AddLine(L["Left click: Toggle timer"])
+	self.Tooltip:AddLine(L["Right click: Reset data"])
 	
 	self:UpdateFont()
 	
@@ -247,173 +971,24 @@ function Gathering:OnMouseUp(button)
 end
 
 Gathering:RegisterEvent("CHAT_MSG_LOOT")
+Gathering:RegisterEvent("PLAYER_ENTERING_WORLD")
 Gathering:SetScript("OnEvent", Gathering.OnEvent)
 Gathering:SetScript("OnEnter", Gathering.OnEnter)
 Gathering:SetScript("OnLeave", Gathering.OnLeave)
 Gathering:SetScript("OnMouseUp", Gathering.OnMouseUp)
 
-Gathering.Tracked = {
-	-- Herbs
-	[765] = true,     -- Silverleaf
-	[785] = true,     -- Mageroyal
-	[2044] = true,    -- Dragon's Teeth
-	[2447] = true,    -- Peacebloom
-	[2449] = true,    -- Earthroot
-	[2450] = true,    -- Briarthorn
-	[2452] = true,    -- Swiftthistle
-	[2453] = true,    -- Bruiseweed
-	[3355] = true,    -- Wild Steelbloom
-	[3356] = true,    -- Kingsblood
-	[3357] = true,    -- Liferoot
-	[3358] = true,    -- Khadgar's Whisker
-	[3369] = true,    -- Grave Moss
-	[3818] = true,    -- Fadeleaf
-	[3819] = true,    -- Wintersbite
-	[3820] = true,    -- Stranglekelp
-	[3821] = true,    -- Goldthorn
-	[4625] = true,    -- Firebloom
-	[8831] = true,    -- Purple Lotus
-	[8836] = true,    -- Arthas' Tears
-	[8838] = true,    -- Sungrass
-	[8839] = true,    -- Blindweed
-	[8845] = true,    -- Ghost Mushroom
-	[8846] = true,    -- Gromsblood
-	[13463] = true,   -- Dreamfoil
-	[13466] = true,   -- Sorrowmoss
-	[13464] = true,   -- Golden Sansam
-	[13465] = true,   -- Mountain Silversage
-	[13466] = true,   -- Plaguebloom
-	[13467] = true,   -- Icecap
-	[13468] = true,   -- Black Lotus
-	[19726] = true,   -- Bloodvine
+SLASH_GATHERING1 = "/gather"
+SLASH_GATHERING2 = "/gathering"
+SlashCmdList["GATHERING"] = function(cmd)
+	if (not Gathering.GUI) then
+		Gathering:CreateGUI()
+		
+		return
+	end
 	
-	-- Ore
-	[2770] = true,    -- Copper Ore
-	[2771] = true,    -- Tin Ore
-	[2775] = true,    -- Silver Ore
-	[2772] = true,    -- Iron Ore
-	[2776] = true,    -- Gold Ore
-	[3858] = true,    -- Mithril Ore
-	[7911] = true,    -- Truesilver Ore
-	[10620] = true,   -- Thorium Ore
-	[12363] = true,   -- Arcane Crystal
-	[19774] = true,   -- Souldarite
-	
-	-- Skins
-	[2934] = true,    -- Ruined Leather Scraps
-	[2318] = true,    -- Light Leather
-	[783] = true,     -- Light Hide
-	[2319] = true,    -- Medium Leather
-	[4232] = true,    -- Medium Hide
-	[20649] = true,   -- Heavy Leather
-	[4304] = true,    -- Thick Leather
-	[8170] = true,    -- Rugged Leather
-	[8171] = true,    -- Rugged Hide
-	[15417] = true,   -- Devilsaur Leather
-	[19767] = true,   -- Primal Bat Leather
-	
-	-- Fish
-	[6291] = true,    -- Raw Brilliant Smallfish
-	[6299] = true,    -- Sickly Looking Fish
-	[6303] = true,    -- Raw Slitherskin Mackerel
-	[6289] = true,    -- Raw Longjaw Mud Snapper
-	[6317] = true,    -- Raw Loch Frenzy
-	[6358] = true,    -- Oily Blackmouth
-	[6361] = true,    -- Raw Rainbow Fin Albacore
-	[21071] = true,   -- Raw Sagefish
-	[6308] = true,    -- Raw Bristle Whisker Catfish
-	[6359] = true,    -- Firefin Snapper
-	[6362] = true,    -- Raw Rockscale Cod
-	[4603] = true,    -- Raw Spotted Yellowtail
-	[12238] = true,   -- Darkshore Grouper
-	[13422] = true,   -- Stonescale Eel
-	[13754] = true,   -- Raw Glossy Mightfish
-	[13755] = true,   -- Winter Squid
-	[13756] = true,   -- Raw Summer Bass
-	[13757] = true,   -- Lightning Eel
-	[13758] = true,   -- Raw Redgill
-	[13759] = true,   -- Raw Nightfin Snapper
-	[13760] = true,   -- Raw Sunscale Salmon
-	[13888] = true,   -- Darkclaw Lobster
-	[13889] = true,   -- Raw Whitescale Salmon
-	[13893] = true,   -- Large Raw Mightfish
-	[6522] = true,    -- Deviate Fish
-	[8365] = true,    -- Raw Mithril Head Trout
-	
-	-- Cooking
-	[769] = true,      -- Chunk of Boar Meat
-	[1015] = true,     -- Lean Wolf Flank
-	[2674] = true,     -- Crawler Meat
-	[2675] = true,     -- Crawler Claw
-	[3173] = true,     -- Bear Meat
-	[3685] = true,     -- Raptor Egg
-	[3712] = true,     -- Turtle Meat
-	[3731] = true,     -- Lion Meat
-	[5503] = true,     -- Clam Meat
-	[12037] = true,    -- Mystery Meat <3
-	[12205] = true,    -- White Spider Meat
-	[12207] = true,    -- Giant Egg
-	[12184] = true,    -- Raptor Flesh
-	[20424] = true,    -- Sandworm Meat
-	
-	-- Cloth
-	[2589] = true,     -- Linen Cloth
-	[2592] = true,     -- Wool Cloth
-	[4306] = true,     -- Silk Cloth
-	[4338] = true,     -- Mageweave Cloth
-	[14047] = true,    -- Runecloth
-	[14256] = true,    -- Felcloth
-	
-	-- Enchanting
-	[10938] = true,    -- Lesser Magic Essence
-	[10939] = true,    -- Greater Magic Essence
-	[10940] = true,    -- Strange Dust
-	[10998] = true,    -- Lesser Astral Essence
-	[11082] = true,    -- Greater Astral Essence
-	[11083] = true,    -- Soul Dust
-	[11134] = true,    -- Lesser Mystic Essence
-	[11135] = true,    -- Greater Mystic Essence
-	[11137] = true,    -- Vision Dust
-	[11174] = true,    -- Lesser Nether Essence
-	[11175] = true,    -- Greater Nether Essence
-	[11176] = true,    -- Dream Dust
-	[11177] = true,    -- Small Radiant Shard
-	[11178] = true,    -- Large Radiant Shard
-	[14343] = true,    -- Small Brilliant Shard
-	[14344] = true,    -- Large Brilliant Shard
-	[16202] = true,    -- Lesser Eternal Essence
-	[16203] = true,    -- Greater Eternal Essence
-	[16204] = true,    -- Illusion Dust
-	
-	-- Noblegarden
-	[45072] = true, -- Brightly Colored Egg
-	
-	-- Other
-	[12811] = true, -- Righteous Orb
-	[12803] = true, -- Living Essence
-	[7076] = true,  -- Essence of Earth
-	[7078] = true,  -- Essence of Fire
-	[7080] = true,  -- Essence of Water
-	[7082] = true,  -- Essence of Air
-	[12938] = true, -- Blood of Heroes
-	[12820] = true, -- Winterfall Firewater
-	[21377] = true, -- Deadwood Headdress Feather
-	[21383] = true, -- Winterfall Spirit Beads
-}
-
---[[Gathering.TrackedItemTypes = {
-	[7] = { -- LE_ITEM_CLASS_TRADEGOODS
-		[5] = true, -- Cloth
-		[6] = true, -- Leather
-		[7] = true, -- Metal & Stone
-		[8] = true, -- Cooking
-		[9] = true, -- Herb
-		[12] = true, -- Enchanting
-	},
-	
-	[15] = { -- LE_ITEM_CLASS_MISCELLANEOUS
-		[2] = true, -- Companion Pets
-		[3] = true, -- Holiday
-		[5] = true, -- Mount
-	},
-}]]
+	if Gathering.GUI:IsShown() then
+		Gathering.GUI:Hide()
+	else
+		Gathering.GUI:Show()
+	end
+end
