@@ -968,7 +968,6 @@ function Gathering:OnEnter()
 			local Price = self:GetPrice(Link)
 			
 			if Price then
-				print(Price, Price*Value, self:CopperToGold(Price*Value))
 				MarketTotal = MarketTotal + (Price * Value)
 			end
 			
