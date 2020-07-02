@@ -314,41 +314,6 @@ function Gathering:UpdateHerbTracking(value)
 	Gathering.Tracked[19726] = value   -- Bloodvine
 end
 
-function Gathering:UpdateHerbTracking(value)
-	Gathering.Tracked[765] = value     -- Silverleaf
-	Gathering.Tracked[785] = value     -- Mageroyal
-	Gathering.Tracked[2044] = value    -- Dragon's Teeth
-	Gathering.Tracked[2447] = value    -- Peacebloom
-	Gathering.Tracked[2449] = value    -- Earthroot
-	Gathering.Tracked[2450] = value    -- Briarthorn
-	Gathering.Tracked[2452] = value    -- Swiftthistle
-	Gathering.Tracked[2453] = value    -- Bruiseweed
-	Gathering.Tracked[3355] = value    -- Wild Steelbloom
-	Gathering.Tracked[3356] = value    -- Kingsblood
-	Gathering.Tracked[3357] = value    -- Liferoot
-	Gathering.Tracked[3358] = value    -- Khadgar's Whisker
-	Gathering.Tracked[3369] = value    -- Grave Moss
-	Gathering.Tracked[3818] = value    -- Fadeleaf
-	Gathering.Tracked[3819] = value    -- Wintersbite
-	Gathering.Tracked[3820] = value    -- Stranglekelp
-	Gathering.Tracked[3821] = value    -- Goldthorn
-	Gathering.Tracked[4625] = value    -- Firebloom
-	Gathering.Tracked[8831] = value    -- Purple Lotus
-	Gathering.Tracked[8836] = value    -- Arthas' Tears
-	Gathering.Tracked[8838] = value    -- Sungrass
-	Gathering.Tracked[8839] = value    -- Blindweed
-	Gathering.Tracked[8845] = value    -- Ghost Mushroom
-	Gathering.Tracked[8846] = value    -- Gromsblood
-	Gathering.Tracked[13463] = value   -- Dreamfoil
-	Gathering.Tracked[13466] = value   -- Sorrowmoss
-	Gathering.Tracked[13464] = value   -- Golden Sansam
-	Gathering.Tracked[13465] = value   -- Mountain Silversage
-	Gathering.Tracked[13466] = value   -- Plaguebloom
-	Gathering.Tracked[13467] = value   -- Icecap
-	Gathering.Tracked[13468] = value   -- Black Lotus
-	Gathering.Tracked[19726] = value   -- Bloodvine
-end
-
 function Gathering:UpdateOreTracking(value)
 	Gathering.Tracked[2770] = value    -- Copper Ore
 	Gathering.Tracked[2771] = value    -- Tin Ore
@@ -530,7 +495,7 @@ end
 function Gathering:CopperToGold(copper)
 	local Gold = floor(copper / (COPPER_PER_SILVER * SILVER_PER_GOLD))
 	local Silver = floor((copper - (Gold * COPPER_PER_SILVER * SILVER_PER_GOLD)) / COPPER_PER_SILVER)
-	local Copper = mod(copper, COPPER_PER_SILVER)
+	local Copper = floor(mod(copper, COPPER_PER_SILVER))
 	local Separator = ""
 	local String = ""
 	
