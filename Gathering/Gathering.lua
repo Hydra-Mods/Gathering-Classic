@@ -40,6 +40,8 @@ if (Locale == "deDE") then -- German
 	L["Enchanting"] = "Enchanting"
 	L["Reagents"] = "Reagents"
 	L["Ignore Bind on Pickup"] = "Ignore Bind on Pickup"
+	L["Show tooltip data"] = "Show tooltip data"
+	L["Price per unit: %s"] = "Price per unit: %s"
 elseif (Locale == "esES") then -- Spanish (Spain)
 	L["Total Gathered:"] = "Total Gathered:"
 	L["Total Average Per Hour:"] = "Total Average Per Hour:"
@@ -57,6 +59,8 @@ elseif (Locale == "esES") then -- Spanish (Spain)
 	L["Enchanting"] = "Enchanting"
 	L["Reagents"] = "Reagents"
 	L["Ignore Bind on Pickup"] = "Ignore Bind on Pickup"
+	L["Show tooltip data"] = "Show tooltip data"
+	L["Price per unit: %s"] = "Price per unit: %s"
 elseif (Locale == "esMX") then -- Spanish (Mexico)
 	L["Total Gathered:"] = "Total Gathered:"
 	L["Total Average Per Hour:"] = "Total Average Per Hour:"
@@ -74,6 +78,8 @@ elseif (Locale == "esMX") then -- Spanish (Mexico)
 	L["Enchanting"] = "Enchanting"
 	L["Reagents"] = "Reagents"
 	L["Ignore Bind on Pickup"] = "Ignore Bind on Pickup"
+	L["Show tooltip data"] = "Show tooltip data"
+	L["Price per unit: %s"] = "Price per unit: %s"
 elseif (Locale == "frFR") then -- French
 	L["Total Gathered:"] = "Total Gathered:"
 	L["Total Average Per Hour:"] = "Total Average Per Hour:"
@@ -91,6 +97,8 @@ elseif (Locale == "frFR") then -- French
 	L["Enchanting"] = "Enchanting"
 	L["Reagents"] = "Reagents"
 	L["Ignore Bind on Pickup"] = "Ignore Bind on Pickup"
+	L["Show tooltip data"] = "Show tooltip data"
+	L["Price per unit: %s"] = "Price per unit: %s"
 elseif (Locale == "itIT") then -- Italian
 	L["Total Gathered:"] = "Total Gathered:"
 	L["Total Average Per Hour:"] = "Total Average Per Hour:"
@@ -108,6 +116,8 @@ elseif (Locale == "itIT") then -- Italian
 	L["Enchanting"] = "Enchanting"
 	L["Reagents"] = "Reagents"
 	L["Ignore Bind on Pickup"] = "Ignore Bind on Pickup"
+	L["Show tooltip data"] = "Show tooltip data"
+	L["Price per unit: %s"] = "Price per unit: %s"
 elseif (Locale == "koKR") then -- Korean
 	L["Total Gathered:"] = "Total Gathered:"
 	L["Total Average Per Hour:"] = "Total Average Per Hour:"
@@ -125,6 +135,8 @@ elseif (Locale == "koKR") then -- Korean
 	L["Enchanting"] = "Enchanting"
 	L["Reagents"] = "Reagents"
 	L["Ignore Bind on Pickup"] = "Ignore Bind on Pickup"
+	L["Show tooltip data"] = "Show tooltip data"
+	L["Price per unit: %s"] = "Price per unit: %s"
 	
 	Font = "Fonts\\2002b.ttf"
 elseif (Locale == "ptBR") then -- Portuguese (Brazil)
@@ -144,6 +156,8 @@ elseif (Locale == "ptBR") then -- Portuguese (Brazil)
 	L["Enchanting"] = "Enchanting"
 	L["Reagents"] = "Reagents"
 	L["Ignore Bind on Pickup"] = "Ignore Bind on Pickup"
+	L["Show tooltip data"] = "Show tooltip data"
+	L["Price per unit: %s"] = "Price per unit: %s"
 elseif (Locale == "ruRU") then -- Russian
 	L["Total Gathered:"] = "Total Gathered:"
 	L["Total Average Per Hour:"] = "Total Average Per Hour:"
@@ -161,6 +175,8 @@ elseif (Locale == "ruRU") then -- Russian
 	L["Enchanting"] = "Enchanting"
 	L["Reagents"] = "Reagents"
 	L["Ignore Bind on Pickup"] = "Ignore Bind on Pickup"
+	L["Show tooltip data"] = "Show tooltip data"
+	L["Price per unit: %s"] = "Price per unit: %s"
 elseif (Locale == "zhCN") then -- Chinese (Simplified)
 	L["Total Gathered:"] = "Total Gathered:"
 	L["Total Average Per Hour:"] = "Total Average Per Hour:"
@@ -178,6 +194,8 @@ elseif (Locale == "zhCN") then -- Chinese (Simplified)
 	L["Enchanting"] = "Enchanting"
 	L["Reagents"] = "Reagents"
 	L["Ignore Bind on Pickup"] = "Ignore Bind on Pickup"
+	L["Show tooltip data"] = "Show tooltip data"
+	L["Price per unit: %s"] = "Price per unit: %s"
 	
 	Font = "Fonts\\ARHei.ttf"
 elseif (Locale == "zhTW") then -- Chinese (Traditional/Taiwan)
@@ -197,6 +215,8 @@ elseif (Locale == "zhTW") then -- Chinese (Traditional/Taiwan)
 	L["Enchanting"] = "Enchanting"
 	L["Reagents"] = "Reagents"
 	L["Ignore Bind on Pickup"] = "Ignore Bind on Pickup"
+	L["Show tooltip data"] = "Show tooltip data"
+	L["Price per unit: %s"] = "Price per unit: %s"
 	
 	Font = "Fonts\\bLEI00D.ttf"
 end
@@ -253,6 +273,8 @@ Gathering.DefaultSettings = {
 	
 	-- Functionality
 	["ignore-bop"] = false, -- Ignore bind on pickup gear. IE: ignore BoP loot on a raid run, but show BoE's for the auction house
+	["hide-idle"] = false, -- Hide the tracker frame while not running
+	["show-tooltip"] = false, -- Show tooltip data about item prices
 }
 
 Gathering.Tracked = {}
@@ -444,6 +466,54 @@ function Gathering:UpdateReagentTracking(value)
 	Gathering.Tracked[21383] = value -- Winterfall Spirit Beads
 end
 
+function Gathering:AddIgnoredItem(text)
+	if (text == "") then
+		return
+	end
+	
+	local ID = tonumber(text)
+	
+	if (not GatheringIgnore) then
+		GatheringIgnore = {}
+	end
+	
+	if ID then
+		GatheringIgnore[ID] = true
+		
+		print(format(ERR_IGNORE_ADDED_S, GetItemInfo(ID)))
+	else
+		GatheringIgnore[text] = true
+		
+		print(format(ERR_IGNORE_ADDED_S, text))
+	end
+end
+
+function Gathering:RemoveIgnoredItem(text)
+	if ((not GatheringIgnore) or (text == "")) then
+		return
+	end
+	
+	local ID = tonumber(text)
+	
+	if ID then
+		GatheringIgnore[ID] = nil
+		
+		print(format(L["%s is now being unignored."], GetItemInfo(ID)))
+	else
+		GatheringIgnore[text] = nil
+		
+		print(format(L["%s is now being unignored."], text))
+	end
+end
+
+function Gathering:ToggleTimerPanel(value)
+	if (value and (not Gathering:GetScript("OnUpdate"))) then
+		Gathering:Hide()
+	else
+		Gathering:Show()
+	end
+end
+
 function Gathering:UpdateFont()
 	for i = 1, self.Tooltip:GetNumRegions() do
 		local Region = select(i, self.Tooltip:GetRegions())
@@ -503,6 +573,10 @@ function Gathering:OnUpdate(ela)
 end
 
 function Gathering:StartTimer()
+	if (self.Settings["hide-idle"] and not self:IsVisible()) then
+		self:Show()
+	end
+	
 	if (not strfind(self.Text:GetText(), "%d")) then
 		self.Text:SetText("0:00:00")
 	end
@@ -540,6 +614,10 @@ function Gathering:Reset()
 	
 	if self.MouseIsOver then
 		self:OnLeave()
+	end
+	
+	if self.Settings["hide-idle"] then
+		self:Hide()
 	end
 end
 
@@ -643,6 +721,108 @@ function Gathering:CreateCheckbox(key, text, func)
 	end
 	
 	tinsert(self.GUI.Window.Widgets, Checkbox)
+end
+
+function Gathering:EditBoxOnEnterPressed()
+	local Text = self:GetText()
+	
+	self:SetAutoFocus(false)
+	self:ClearFocus()
+	
+	if self.Hook then
+		self:Hook(Text)
+	end
+	
+	self:SetText(L["Ignore items"])
+end
+
+function Gathering:EditBoxOnMouseDown()
+	local Type, ID, Link = GetCursorInfo()
+	
+	self:SetAutoFocus(true)
+	
+	if (Type and Type == "item") then
+		self:SetText(ID)
+		self.Icon:SetTexture(C_Item.GetItemIconByID(ID))
+	else
+		self:SetText("")
+	end
+	
+	ClearCursor()
+end
+
+function Gathering:OnEditFocusLost()
+	self:SetText("")
+	self.Icon:SetTexture("Interface\\ICONS\\INV_Misc_QuestionMark")
+	ClearCursor()
+end
+
+function Gathering:OnEditChar(text)
+	local ID = tonumber(self:GetText())
+	
+	if (not ID) then
+		self.Icon:SetTexture("Interface\\ICONS\\INV_Misc_QuestionMark")
+		
+		return
+	end
+	
+	local IconID = C_Item.GetItemIconByID(ID)
+	
+	if (IconID and IconID ~= 134400) then
+		self.Icon:SetTexture(IconID)
+	else
+		self.Icon:SetTexture("Interface\\ICONS\\INV_Misc_QuestionMark")
+	end
+end
+
+function Gathering:CreateEditBox(text, func)
+	local EditBox = CreateFrame("EditBox", nil, self.GUI.ButtonParent)
+	EditBox:SetSize(168, 20)
+	EditBox:SetFont(Font, 12)
+	EditBox:SetShadowColor(0, 0, 0)
+	EditBox:SetShadowOffset(1, -1)
+	EditBox:SetJustifyH("LEFT")
+	EditBox:SetAutoFocus(false)
+	EditBox:EnableKeyboard(true)
+	EditBox:EnableMouse(true)
+	EditBox:SetMaxLetters(255)
+	EditBox:SetTextInsets(5, 0, 0, 0)
+	EditBox:SetText(text)
+	EditBox:SetScript("OnEnterPressed", self.EditBoxOnEnterPressed)
+	EditBox:SetScript("OnEscapePressed", self.EditBoxOnEnterPressed)
+	EditBox:SetScript("OnMouseDown", self.EditBoxOnMouseDown)
+	EditBox:SetScript("OnEditFocusLost", self.OnEditFocusLost)
+	EditBox:SetScript("OnChar", self.OnEditChar)
+	
+	if func then
+		EditBox.Hook = func
+	end
+	
+	EditBox.BG = EditBox:CreateTexture(nil, "BORDER")
+	EditBox.BG:SetTexture(BlankTexture)
+	EditBox.BG:SetVertexColor(0, 0, 0)
+	EditBox.BG:SetPoint("TOPLEFT", EditBox, 0, 0)
+	EditBox.BG:SetPoint("BOTTOMRIGHT", EditBox, 0, 0)
+	
+	EditBox.Tex = EditBox:CreateTexture(nil, "ARTWORK")
+	EditBox.Tex:SetTexture(BarTexture)
+	EditBox.Tex:SetPoint("TOPLEFT", EditBox, 1, -1)
+	EditBox.Tex:SetPoint("BOTTOMRIGHT", EditBox, -1, 1)
+	EditBox.Tex:SetVertexColor(0.4, 0.4, 0.4)
+	
+	EditBox.Icon = EditBox:CreateTexture(nil, "ARTWORK")
+	EditBox.Icon:SetPoint("LEFT", EditBox, "RIGHT", 3, 0)
+	EditBox.Icon:SetSize(18, 18)
+	EditBox.Icon:SetTexture("Interface\\ICONS\\INV_Misc_QuestionMark")
+	EditBox.Icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
+	
+	EditBox.BG = EditBox:CreateTexture(nil, "BORDER")
+	EditBox.BG:SetTexture(BlankTexture)
+	EditBox.BG:SetVertexColor(0, 0, 0)
+	EditBox.BG:SetPoint("TOPLEFT", EditBox.Icon, -1, 1)
+	EditBox.BG:SetPoint("BOTTOMRIGHT", EditBox.Icon, 1, -1)
+	
+	tinsert(self.GUI.Window.Widgets, EditBox)
 end
 
 local Scroll = function(self)
@@ -808,6 +988,16 @@ function Gathering:CreateGUI()
 	self:CreateHeader(MISCELLANEOUS)
 	
 	self:CreateCheckbox("ignore-bop", L[L["Ignore Bind on Pickup"]])
+	self:CreateCheckbox("hide-idle", L["Hide while idle"], self.ToggleTimerPanel)
+	self:CreateCheckbox("show-tooltip", L["Show tooltip data"])
+	
+	self:CreateHeader(IGNORE)
+	
+	self:CreateEditBox(L["Ignore items"], self.AddIgnoredItem)
+	
+	self:CreateHeader(UNIGNORE_QUEST)
+	
+	self:CreateEditBox(L["Unignore items"], self.RemoveIgnoredItem)
 	
 	-- Scroll bar
 	self.GUI.Window.ScrollBar = CreateFrame("Slider", nil, self.GUI.ButtonParent)
@@ -912,6 +1102,24 @@ function Gathering:MODIFIER_STATE_CHANGED()
 	end
 end
 
+function Gathering:OnTooltipSetItem()
+	if (not Gathering.Settings["show-tooltip"]) then
+		return
+	end
+	
+	local Item, Link = self:GetItem()
+	
+	if Item then
+		local Price = Gathering:GetPrice(Link)
+		
+		if (Price and Price > 0) then
+			self:AddLine(" ")
+			self:AddLine("|cff00CC6AGathering|r")
+			self:AddLine(format(L["Price per unit: %s"], Gathering:CopperToGold(Price)), 1, 1, 1)
+		end
+	end
+end
+
 function Gathering:PLAYER_ENTERING_WORLD()
 	self.Ignored = GatheringIgnore or {}
 	
@@ -919,6 +1127,12 @@ function Gathering:PLAYER_ENTERING_WORLD()
 	
 	if IsAddOnLoaded("TradeSkillMaster") then
 		self.HasTSM = true
+	end
+	
+	GameTooltip:HookScript("OnTooltipSetItem", self.OnTooltipSetItem)
+	
+	if self.Settings["hide-idle"] then
+		self:Hide()
 	end
 	
 	self:UnregisterEvent("PLAYER_ENTERING_WORLD")
