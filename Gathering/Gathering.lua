@@ -495,9 +495,9 @@ function Gathering:UpdateFont()
 end
 
 function Gathering:CopperToGold(copper)
-	local Gold = floor(copper / (COPPER_PER_SILVER * SILVER_PER_GOLD))
-	local Silver = floor((copper - (Gold * COPPER_PER_SILVER * SILVER_PER_GOLD)) / COPPER_PER_SILVER)
-	local Copper = floor(mod(copper, COPPER_PER_SILVER))
+	local Gold = floor(copper / (100 * 100))
+	local Silver = floor((copper - (Gold * 100 * 100)) / 100)
+	local Copper = floor(copper % 100)
 	local Separator = ""
 	local String = ""
 	
