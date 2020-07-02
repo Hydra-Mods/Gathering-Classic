@@ -458,7 +458,27 @@ function Gathering:UpdateFont()
 end
 
 function Gathering:CopperToGold(copper)
-	return format("%s|cfff4d03fg|r", BreakUpLargeNumbers(floor((copper / 100) / 100 + 0.5)))
+	local Gold = floor(copper / (COPPER_PER_SILVER * SILVER_PER_GOLD))
+	local Silver = floor((copper - (Gold * COPPER_PER_SILVER * SILVER_PER_GOLD)) / COPPER_PER_SILVER)
+	local Copper = mod(copper, COPPER_PER_SILVER)
+	local Separator = ""
+	local String = ""
+	
+	if (Gold > 0) then
+		String = Gold .. "|cffffe02eg|r"
+		Separator = " "
+	end
+	
+	if (Silver > 0) then
+		String = String .. Separator .. Silver .. "|cffd6d6d6s|r"
+		Separator = " "
+	end
+	
+	if (Copper > 0 or String == "") then
+		String = String .. Separator .. Copper .. "|cfffc8d2bc|r"
+	end
+	
+	return String
 end
 
 function Gathering:OnUpdate(ela)
@@ -847,6 +867,7 @@ function Gathering:CHAT_MSG_LOOT(msg)
 	
 	ID = tonumber(ID)
 	Quantity = tonumber(Quantity) or 1
+	
 	local Type, SubType, _, _, _, _, _, _, BindType = select(6, GetItemInfo(ID))
 	
 	-- Check that we want to track the type of item
@@ -863,15 +884,15 @@ function Gathering:CHAT_MSG_LOOT(msg)
 		self.NumTypes = self.NumTypes + 1
 	end
 	
-	if (not self.Gathered[SubType][Name]) then
-		self.Gathered[SubType][Name] = 0
+	if (not self.Gathered[SubType][ID]) then
+		self.Gathered[SubType][ID] = 0
 	end
 	
-	if (not self.SecondsPerItem[Name]) then
-		self.SecondsPerItem[Name] = 0
+	if (not self.SecondsPerItem[ID]) then
+		self.SecondsPerItem[ID] = 0
 	end
 	
-	self.Gathered[SubType][Name] = self.Gathered[SubType][Name] + Quantity
+	self.Gathered[SubType][ID] = self.Gathered[SubType][ID] + Quantity
 	self.TotalGathered = self.TotalGathered + Quantity -- For gathered/hr stat
 	
 	if (not self:GetScript("OnUpdate")) then
@@ -884,10 +905,21 @@ function Gathering:CHAT_MSG_LOOT(msg)
 	end
 end
 
+function Gathering:MODIFIER_STATE_CHANGED()
+	if self.MouseIsOver then
+		self.Tooltip:ClearLines()
+		self:OnEnter()
+	end
+end
+
 function Gathering:PLAYER_ENTERING_WORLD()
 	self.Ignored = GatheringIgnore or {}
 	
 	self:InitiateSettings()
+	
+	if IsAddOnLoaded("TradeSkillMaster") then
+		self.HasTSM = true
+	end
 	
 	self:UnregisterEvent("PLAYER_ENTERING_WORLD")
 end
@@ -895,6 +927,12 @@ end
 function Gathering:OnEvent(event, ...)
 	if self[event] then
 		self[event](self, ...)
+	end
+end
+
+function Gathering:GetPrice(link)
+	if self.HasTSM then
+		return TSM_API.GetCustomPriceValue("dbMarket", TSM_API.ToItemString(link))
 	end
 end
 
@@ -906,6 +944,7 @@ function Gathering:OnEnter()
 	self.MouseIsOver = true
 	
 	local Count = 0
+	local MarketTotal = 0
 	
 	self.Tooltip:SetOwner(self, "ANCHOR_NONE")
 	self.Tooltip:SetPoint("TOPLEFT", self, "BOTTOMLEFT")
@@ -918,15 +957,26 @@ function Gathering:OnEnter()
 		self.Tooltip:AddLine(SubType, 1, 1, 0)
 		Count = Count + 1
 		
-		for Name, Value in pairs(Info) do
-			local Rarity = select(3, GetItemInfo(Name))
+		for ID, Value in pairs(Info) do
+			local Name, Link, Rarity = GetItemInfo(ID)
 			local Hex = "|cffFFFFFF"
 			
 			if Rarity then
 				Hex = ITEM_QUALITY_COLORS[Rarity].hex
 			end
-
-			self.Tooltip:AddDoubleLine(format("%s%s|r:", Hex, Name), format("%s (%s/%s)", Value, floor((Value / max(self.SecondsPerItem[Name], 1)) * 60 * 60), L["Hr"]), 1, 1, 1, 1, 1, 1)
+			
+			local Price = self:GetPrice(Link)
+			
+			if Price then
+				print(Price, Price*Value, self:CopperToGold(Price*Value))
+				MarketTotal = MarketTotal + (Price * Value)
+			end
+			
+			if (IsShiftKeyDown() and Price) then
+				self.Tooltip:AddDoubleLine(format("%s%s|r:", Hex, Name), format("%s (%s/%s)", Value, self:CopperToGold((Price * Value / max(self.SecondsPerItem[ID], 1)) * 60 * 60), L["Hr"]), 1, 1, 1, 1, 1, 1)
+			else
+				self.Tooltip:AddDoubleLine(format("%s%s|r:", Hex, Name), format("%s (%s/%s)", Value, floor((Value / max(self.SecondsPerItem[ID], 1)) * 60 * 60), L["Hr"]), 1, 1, 1, 1, 1, 1)
+			end
 		end
 		
 		if (Count ~= self.NumTypes) then
@@ -936,12 +986,24 @@ function Gathering:OnEnter()
 	
 	self.Tooltip:AddLine(" ")
 	self.Tooltip:AddDoubleLine(L["Total Gathered:"], self.TotalGathered, nil, nil, nil, 1, 1, 1)
-	self.Tooltip:AddDoubleLine(L["Total Average Per Hour:"], BreakUpLargeNumbers(floor(((self.TotalGathered / max(self.Seconds, 1)) * 60 * 60))), nil, nil, nil, 1, 1, 1)
+	
+	if IsShiftKeyDown() and MarketTotal > 0 then
+		self.Tooltip:AddDoubleLine(L["Total Average Per Hour:"], self:CopperToGold((MarketTotal / max(self.Seconds, 1)) * 60 * 60), nil, nil, nil, 1, 1, 1)
+	else
+		self.Tooltip:AddDoubleLine(L["Total Average Per Hour:"], BreakUpLargeNumbers(floor(((self.TotalGathered / max(self.Seconds, 1)) * 60 * 60))), nil, nil, nil, 1, 1, 1)
+	end
+	
+	if (MarketTotal > 0) then
+		self.Tooltip:AddDoubleLine(L["Total Value:"], self:CopperToGold(MarketTotal), nil, nil, nil, 1, 1, 1)
+	end
+	
 	self.Tooltip:AddLine(" ")
 	self.Tooltip:AddLine(L["Left click: Toggle timer"])
 	self.Tooltip:AddLine(L["Right click: Reset data"])
 	
 	self:UpdateFont()
+	
+	self:RegisterEvent("MODIFIER_STATE_CHANGED")
 	
 	self.Tooltip:Show()
 end
@@ -952,6 +1014,8 @@ function Gathering:OnLeave()
 	end
 	
 	self.MouseIsOver = false
+	
+	self:UnregisterEvent("MODIFIER_STATE_CHANGED")
 	
 	self.Tooltip:Hide()
 end
