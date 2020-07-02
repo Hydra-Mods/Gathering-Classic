@@ -380,6 +380,8 @@ function Gathering:UpdateMeatTracking(value)
 	Gathering.Tracked[3712] = value     -- Turtle Meat
 	Gathering.Tracked[3731] = value     -- Lion Meat
 	Gathering.Tracked[5503] = value     -- Clam Meat
+	Gathering.Tracked[12202] = value    -- Tiger Meat
+	Gathering.Tracked[12203] = value    -- Red Wolf Meat
 	Gathering.Tracked[12037] = value    -- Mystery Meat <3
 	Gathering.Tracked[12205] = value    -- White Spider Meat
 	Gathering.Tracked[12207] = value    -- Giant Egg
