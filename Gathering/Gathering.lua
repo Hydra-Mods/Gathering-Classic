@@ -323,6 +323,7 @@ function Gathering:UpdateOreTracking(value)
 	Gathering.Tracked[3858] = value    -- Mithril Ore
 	Gathering.Tracked[7911] = value    -- Truesilver Ore
 	Gathering.Tracked[10620] = value   -- Thorium Ore
+	Gathering.Tracked[11370] = value   -- Dark Iron Ore
 	Gathering.Tracked[12363] = value   -- Arcane Crystal
 	Gathering.Tracked[19774] = value   -- Souldarite
 end
