@@ -432,6 +432,29 @@ function Gathering:UpdateReagentTracking(value)
 	Gathering.Tracked[12820] = value -- Winterfall Firewater
 	Gathering.Tracked[21377] = value -- Deadwood Headdress Feather
 	Gathering.Tracked[21383] = value -- Winterfall Spirit Beads
+	
+	-- Mining
+	Gathering.Tracked[774] = value   -- Malachite
+	Gathering.Tracked[818] = value   -- Tigerseye
+	Gathering.Tracked[1206] = value  -- Moss Agate
+	Gathering.Tracked[1210] = value  -- Shadowgem
+	Gathering.Tracked[1529] = value  -- Jade
+	Gathering.Tracked[1705] = value  -- Lesser Moonstone
+	Gathering.Tracked[3864] = value  -- Citrine
+	Gathering.Tracked[7909] = value  -- Aquamarine
+	Gathering.Tracked[7910] = value  -- Star Ruby
+	Gathering.Tracked[11382] = value -- Blood of the Mountain
+	Gathering.Tracked[11754] = value -- Black Diamond
+	Gathering.Tracked[12361] = value -- Blue Sapphire
+	Gathering.Tracked[12363] = value -- Arcane Crystal
+	Gathering.Tracked[12364] = value -- Huge Emerald
+	Gathering.Tracked[12799] = value -- Large Opal
+	Gathering.Tracked[12800] = value -- Azerothian Diamond
+	
+	Gathering.Tracked[2835] = value -- Rough Stone
+	Gathering.Tracked[2838] = value -- Heavy Stone
+	Gathering.Tracked[7912] = value -- Solid Stone
+	Gathering.Tracked[12365] = value -- Dense Stone
 end
 
 function Gathering:AddIgnoredItem(text)
