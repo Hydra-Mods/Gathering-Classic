@@ -451,9 +451,9 @@ function Gathering:UpdateReagentTracking(value)
 	Gathering.Tracked[12799] = value -- Large Opal
 	Gathering.Tracked[12800] = value -- Azerothian Diamond
 	
-	Gathering.Tracked[2835] = value -- Rough Stone
-	Gathering.Tracked[2838] = value -- Heavy Stone
-	Gathering.Tracked[7912] = value -- Solid Stone
+	Gathering.Tracked[2835] = value  -- Rough Stone
+	Gathering.Tracked[2838] = value  -- Heavy Stone
+	Gathering.Tracked[7912] = value  -- Solid Stone
 	Gathering.Tracked[12365] = value -- Dense Stone
 end
 
