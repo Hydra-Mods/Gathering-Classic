@@ -620,8 +620,7 @@ function Gathering:FormatTime(seconds)
 	end
 end
 
-function Gathering:CreateHeader(text) -- GENERAL
-	-- Main header
+function Gathering:CreateHeader(text)
 	local Header = CreateFrame("Frame", nil, self.GUI.ButtonParent)
 	Header:SetSize(190, 20)
 	
@@ -682,10 +681,6 @@ function Gathering:CreateCheckbox(key, text, func)
 	Checkbox:SetScript("OnMouseUp", self.CheckBoxOnMouseUp)
 	Checkbox.Setting = key
 	
-	if func then
-		Checkbox.Hook = func
-	end
-	
 	Checkbox.BG = Checkbox:CreateTexture(nil, "BORDER")
 	Checkbox.BG:SetTexture(BlankTexture)
 	Checkbox.BG:SetVertexColor(0, 0, 0)
@@ -704,6 +699,10 @@ function Gathering:CreateCheckbox(key, text, func)
 	Checkbox.Text:SetShadowColor(0, 0, 0)
 	Checkbox.Text:SetShadowOffset(1, -1)
 	Checkbox.Text:SetText(text)
+	
+	if func then
+		Checkbox.Hook = func
+	end
 	
 	if self.Settings[key] then
 		Checkbox.Tex:SetVertexColor(0, 0.8, 0)
@@ -785,10 +784,6 @@ function Gathering:CreateEditBox(text, func)
 	EditBox:SetScript("OnEditFocusLost", self.OnEditFocusLost)
 	EditBox:SetScript("OnChar", self.OnEditChar)
 	
-	if func then
-		EditBox.Hook = func
-	end
-	
 	EditBox.BG = EditBox:CreateTexture(nil, "BORDER")
 	EditBox.BG:SetTexture(BlankTexture)
 	EditBox.BG:SetVertexColor(0, 0, 0)
@@ -813,6 +808,10 @@ function Gathering:CreateEditBox(text, func)
 	EditBox.BG:SetPoint("TOPLEFT", EditBox.Icon, -1, 1)
 	EditBox.BG:SetPoint("BOTTOMRIGHT", EditBox.Icon, 1, -1)
 	
+	if func then
+		EditBox.Hook = func
+	end
+	
 	tinsert(self.GUI.Window.Widgets, EditBox)
 end
 
@@ -836,13 +835,13 @@ local Scroll = function(self)
 end
 
 local WindowOnMouseWheel = function(self, delta)
-	if (delta == 1) then -- up
+	if (delta == 1) then
 		self.Offset = self.Offset - 1
 		
 		if (self.Offset <= 1) then
 			self.Offset = 1
 		end
-	else -- down
+	else
 		self.Offset = self.Offset + 1
 		
 		if (self.Offset > (#self.Widgets - (MaxWidgets - 1))) then
@@ -965,7 +964,7 @@ function Gathering:CreateGUI()
 	self.GUI.OuterBackdrop:SetFrameStrata("LOW")
 	
 	-- Layout
-	self:CreateHeader(TRACKING) -- GENERAL
+	self:CreateHeader(TRACKING)
 	
 	self:CreateCheckbox("track-ore", L["Ore"], self.UpdateOreTracking)
 	self:CreateCheckbox("track-herbs", L["Herbs"], self.UpdateHerbTracking)
