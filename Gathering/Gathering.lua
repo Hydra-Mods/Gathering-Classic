@@ -700,14 +700,14 @@ function Gathering:CreateCheckbox(key, text, func)
 	Checkbox.Text:SetShadowOffset(1, -1)
 	Checkbox.Text:SetText(text)
 	
-	if func then
-		Checkbox.Hook = func
-	end
-	
 	if self.Settings[key] then
 		Checkbox.Tex:SetVertexColor(0, 0.8, 0)
 	else
 		Checkbox.Tex:SetVertexColor(0.8, 0, 0)
+	end
+	
+	if func then
+		Checkbox.Hook = func
 	end
 	
 	tinsert(self.GUI.Window.Widgets, Checkbox)
@@ -723,6 +723,12 @@ function Gathering:EditBoxOnEnterPressed()
 		self:Hook(Text)
 	end
 	
+	self:SetText(L["Ignore items"])
+end
+
+function Gathering:OnEscapePressed()
+	self:SetAutoFocus(false)
+	self:ClearFocus()
 	self:SetText(L["Ignore items"])
 end
 
@@ -779,7 +785,7 @@ function Gathering:CreateEditBox(text, func)
 	EditBox:SetTextInsets(5, 0, 0, 0)
 	EditBox:SetText(text)
 	EditBox:SetScript("OnEnterPressed", self.EditBoxOnEnterPressed)
-	EditBox:SetScript("OnEscapePressed", self.EditBoxOnEnterPressed)
+	EditBox:SetScript("OnEscapePressed", self.OnEscapePressed)
 	EditBox:SetScript("OnMouseDown", self.EditBoxOnMouseDown)
 	EditBox:SetScript("OnEditFocusLost", self.OnEditFocusLost)
 	EditBox:SetScript("OnChar", self.OnEditChar)
