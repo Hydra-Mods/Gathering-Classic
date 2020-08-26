@@ -455,6 +455,13 @@ function Gathering:UpdateReagentTracking(value)
 	Gathering.Tracked[2838] = value  -- Heavy Stone
 	Gathering.Tracked[7912] = value  -- Solid Stone
 	Gathering.Tracked[12365] = value -- Dense Stone
+	
+	-- AQ
+	Gathering.Tracked[12809] = value -- Guardian Stone
+	Gathering.Tracked[18512] = value -- Larval Acid
+	
+	-- Naxxramas
+	Gathering.Tracked[22682] = value -- Frozen Rune
 end
 
 function Gathering:AddIgnoredItem(text)
